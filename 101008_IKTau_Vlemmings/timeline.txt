@@ -1,0 +1,69 @@
+Setup and Scheduling Notes
+
+tune -c "waveplate in" 
+tune -c "hotload in" 
+observe -s IKTau -r 03:53:28.84 -d +11:24:22.6 -e 2000 -v 35 
+dopplerTrack -r 230.53797 -u -s21 
+setFeedOffset -f 230 
+restartCorrelator -R l -s128
+
+This polarization observation can begin at 
+17:30 HST (03:30 UT) and will do this: HST Event 
+17:30 Start script. It goes to 3c454.3 (bandpass/polarization cal) 
+19:30 Callisto (flux cal) 
+19:35 3c454.3 (bandpass/polarization cal) 
+23:10 Target loop on IKTau (0423-013 gain cal) 
+00:20 3c454.3 (bandpass/polarization cal) 
+00:50 Target loop on IKTau (0423-013 gain cal) 
+01:35 3c454.3 (bandpass/polarization cal) 
+01:50 Target loop on IKTau (0423-013 gain cal) 
+08:10 Gain cal sets below el limit. Kill script after gain cal.
+
++ show Priming Report
+
+Operator Comments
+
+Operators: 0th Shift: Adrien and Anil 1st Shift: Karin and Ryan 2nd Shift: Sheng-Feng and Chun-Hui One of infrared cameras is out of function.
+Timeline
+
+Time lost during this observation: 18.0 antenna-hours (out of 126.2)
+
+time (UTC) 	op. 	event
+02:58 	adosaj 	observing report opened
+entire obs 	rhowie 	TIME LOST type: Antenna in the hangar ants: 4 data: lost
+  	  	
+details:	
+action taken:	
+03:00 	adosaj 	Observing 1924-292 while we wait for script start time and 3c454.3 to rise.
+03:26 	adosaj 	Pushing script start back by 20-30 mins as per Ram's request.
+03:51 	adosaj 	Script started.
+04:00 	rhowie 	We arrived at the summit and drove around the array. We found nothing that would impede movement of the antennas.
+04:08 	rhowie 	I took over running polar and the script.
+05:08 	rhowie 	I killed the script and polar to ipoint -m -i 32 on 3c454.3.
+05:19 	rhowie 	The offsets were consistent and accepted: Average: Ant 1 AzOff = -14.5 ElOff = 5.9 deltaAz = -2.6 deltaEl = -1.2 Ant 2 AzOff = -3.7 ElOff = 7.4 deltaAz = -5.7 deltaEl = -8.3 Ant 3 AzOff = -2.9 ElOff = 8.1 deltaAz = -1.3 deltaEl = -2.7 Ant 5 AzOff = -3.1 ElOff = 8.0 deltaAz = -4.2 deltaEl = -4.9 Ant 6 AzOff = 5.0 ElOff = 4.5 deltaAz = 4.1 deltaEl = -3.6 Ant 7 AzOff = -3.6 ElOff = 6.4 deltaAz = 3.9 deltaEl = -5.5 Ant 8 AzOff = -4.8 ElOff = 4.1 deltaAz = -1.4 deltaEl = -11.3
+05:19 	rhowie 	I started polar and the script.
+05:39-05:39 	rhowie 	TIME LOST type: correlator crates stop counting ants: 1,2,3,5,6,7,8 data: lost
+  	  	
+details:	
+action taken:	correlatorResume
+06:00-06:05 	rhowie 	TIME LOST type: correlator polarization leakage ants: 1,2,3,5,6,7,8 data: lost
+  	  	
+details:	Crate 3 was lagging behind the rest of the crates.
+action taken:	restartCorrelator -R l -s128
+06:05-06:14 	rhowie 	TIME LOST type: Operator Error ants: 1,2,3,5,6,7,8 data: lost
+  	  	
+details:	I forgot to switch the scans back to 15 seconds after the correlator restart.
+action taken:	I killed polar and the script. integrate -t 15 I restarted polar and the script.
+10:49-10:50 	rhowie 	TIME LOST type: correlator crates stop counting ants: 1,2,3,5,6,7,8 data: lost
+  	  	
+details:	
+action taken:	correlatorResume
+11:08-11:12 	rhowie 	TIME LOST type: correlator polarization leakage ants: 1,2,3,5,6,7,8 data: lost
+  	  	
+details:	
+action taken:	restartCorrelator -R l -s128 integrate -t 15
+12:08 	sfyen 	Sheng-Feng and Chun-Hui took over from IAA.
+18:02 	sfyen 	Kill the script when gain cal and run full polarization pattern on 0423-013 according to Ram's instrction.
+18:18 	sfyen 	The acc8 spontaneous antenna reboot when I type command stow. I will reboot and stow. Thank Ram hlep to lock it for EndObs.
+18:32 	sfyen 	Run EndObs and EndProject.
+18:44 	sfyen 	observing report closed

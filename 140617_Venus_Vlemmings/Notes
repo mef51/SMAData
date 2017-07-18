@@ -1,0 +1,95 @@
+
+pants: 
+select
+All Sources:   1751+096 1751+096_LR titan WAql 3C454.3_LR 3C454.3 neptune
+3c454.3 uranus venus
+All Baselines:  1-2 1-4 1-5 1-6 1-7 1-8 2-4 2-5 2-6 2-7 2-8 4-5 4-6 4-7 4-8 5-6
+5-7 5-8 6-7 6-8 7-8
+All Recs:  230 345 400 690
+All Bands:  c1 s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12 s13 s14 s15 s16
+s17 s18 s19 s20 s21 s22 s23 s24
+All Sidebands :  l u
+All Polarization states:  Unknown RR RL LR LL LH LV RH RV HR HL HH HV VR VL VH
+VV
+All Integrations: 0-2535
+
+plot_var
+
+apply_tsys
+
+select,/p,/re
+dfilter,'"blcd" like "7"'
+dfilter,'"dhrs" gt "16.8"'
+flag,/flag
+select,/p,/re
+
+IDL> dfilter,'"integ" lt "10"'
+      240000 passed in filter
+IDL> flag,/flag
+
+IDL> dfilter,'"int" gt "2441"'
+      341600 passed in filter
+IDL> flag,/flag
+
+IDL> select,/p,/re
+IDL> dfilter,'"blcd" like "7"'
+     2637000 passed in filter
+IDL> dfilter,'"dhrs" gt "17"'
+      341800 passed in filter
+IDL> flag,/flag
+
+
+Bandpass:
+---------
+IDL> pass_cal_pol, refant=2, smoothing=2, preavg=2, ntrim=1
+Check: Found a total of           10  different sources in the data set.
+Set which sources will be used as calibrators and set the calibrator fluxes
+The flux should be in Jy at the frequency of the observation
+These are the sources and their current passband codes 
+name:  1751+096           passband cal: NO 
+name:  1751+096_LR        passband cal: NO 
+name:  titan              passband cal: NO 
+name:  WAql               passband cal: NO 
+name:  3C454.3_LR         passband cal: NO 
+name:  3C454.3            passband cal: YES
+name:  neptune            passband cal: NO 
+name:  3c454.3            passband cal: NO 
+name:  uranus             passband cal: NO 
+name:  venus              passband cal: NO 
+Enter source and new cal code. eg: 3C273 YES
+or hit Return if all the sources are correctly specified
+: 
+OK, now checking the data...
+Check: Found            1  sources set to be used as passband calibrators
+Check: The average amplitudes of the sources in the data set: 
+1751+096      1.32586
+1751+096_LR      1.02909
+titan      1.26371
+WAql     0.694859
+3C454.3_LR      4.10071
+3C454.3      5.64821
+neptune      6.04148
+3c454.3      5.10320
+uranus      8.25817
+venus      23.8496
+use        0       0       0       0       0       1       0       0       0
+       0
+all_souids            1           2           3           4           5
+           6           7           8           9          10
+all_sources  1751+096 1751+096_LR titan WAql 3C454.3_LR 3C454.3 neptune 3c454.3
+uranus venus
+all_amps       1.32586      1.02909      1.26371     0.694859      4.10071
+      5.64821      6.04148      5.10320      8.25817      23.8496
+number of pass cals            1
+pas_souids       6.00000
+***********************************************
+
+
+select,/p,/re
+uti_avgband
+
+mir_save,'tsys_bandpass'
+
+uti_xdelay,reference='3c454.3_LR',smoothing=2, preavg=2, ntrim=2
+
+

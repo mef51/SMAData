@@ -1,0 +1,60 @@
+.r ~/idl/idlinit
+.r ~/idl/myrouts.pro
+.compile ~/idl/idl2mir_rr.pro
+
+readdata,dir='/sma/data/science/mir_data/130903_03:46:51'
+
+select
+% Compiled module: SELECT.
+All Sources:   1751+096 smc.6 bllac
+All Baselines:  2-4 2-5 2-6 2-7 2-8 4-5 4-6 4-7 4-8 5-6 5-7 5-8 6-7 6-8 7-8
+All Recs:  230 345 400 690
+All Bands:  c1 s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12 s13 s14 s15 s16
+s17 s18 s19 s20 s21 s22 s23 s24
+All Sidebands :  l u
+All Polarization states:  hh vv hv vh
+All Integrations: 0-622
+
+
+Flag all ipointing data
+result=dat_filter(s_f,' "integ" lt "10" ',/reset)
+flag,/flag
+
+select,/p,/re
+apply_tsys
+
+select,/p,/re
+uti_avgband
+
+select,rx=345,/p,/re
+idl2miriad,dir='1733-130_3x3.usb',source='1733-130',sideband='u',polar=1
+idl2miriad,dir='1733-130_3x3.lsb',source='1733-130',sideband='l',polar=1
+idl2miriad,dir='GGD27_3x3.usb',source='GGD27',sideband='u',polar=1
+idl2miriad,dir='GGD27_3x3.lsb',source='GGD27',sideband='l',polar=1
+idl2miriad,dir='bllac_3x3.usb',source='bllac',sideband='u',polar=1
+idl2miriad,dir='bllac_3x3.lsb',source='bllac',sideband='l',polar=1
+idl2miriad,dir='1911-201_3x3.usb',source='1911-201',sideband='u',polar=1
+idl2miriad,dir='1911-201_3x3.lsb',source='1911-201',sideband='l',polar=1
+idl2miriad,dir='Neptune_3x3.usb',source='Neptune',sideband='u',polar=1
+idl2miriad,dir='Neptune_3x3.lsb',source='Neptune',sideband='l',polar=1
+idl2miriad,dir='3c454.3_3x3.usb',source='3c454.3',sideband='u',polar=1
+idl2miriad,dir='3c454.3_3x3.lsb',source='3c454.3',sideband='l',polar=1
+idl2miriad,dir='neptune_3x3.usb',source='neptune',sideband='u',polar=1
+idl2miriad,dir='neptune_3x3.lsb',source='neptune',sideband='l',polar=1
+
+select,/p,/re
+select,rx=400,/p,/re
+idl2miriad,dir='1733-130_4x4.usb',source='1733-130',sideband='u',polar=1
+idl2miriad,dir='1733-130_4x4.lsb',source='1733-130',sideband='l',polar=1
+idl2miriad,dir='GGD27_4x4.usb',source='GGD27',sideband='u',polar=1
+idl2miriad,dir='GGD27_4x4.lsb',source='GGD27',sideband='l',polar=1
+idl2miriad,dir='bllac_4x4.usb',source='bllac',sideband='u',polar=1
+idl2miriad,dir='bllac_4x4.lsb',source='bllac',sideband='l',polar=1
+idl2miriad,dir='1911-201_4x4.usb',source='1911-201',sideband='u',polar=1
+idl2miriad,dir='1911-201_4x4.lsb',source='1911-201',sideband='l',polar=1
+idl2miriad,dir='Neptune_4x4.usb',source='Neptune',sideband='u',polar=1
+idl2miriad,dir='Neptune_4x4.lsb',source='Neptune',sideband='l',polar=1
+idl2miriad,dir='3c454.3_4x4.usb',source='3c454.3',sideband='u',polar=1
+idl2miriad,dir='3c454.3_4x4.lsb',source='3c454.3',sideband='l',polar=1
+idl2miriad,dir='neptune_4x4.usb',source='neptune',sideband='u',polar=1
+idl2miriad,dir='neptune_4x4.lsb',source='neptune',sideband='l',polar=1

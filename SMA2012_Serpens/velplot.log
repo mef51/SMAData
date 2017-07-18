@@ -1,0 +1,7 @@
+VELPLOT (version 3.0 15-Aug-2013)
+Image File : MAP_LINES/smc.6.so_9887.r2.ch.cm
+smc.6     18:29:49.787  +01:15:20.400 cell:   0.200 vel:    4.77 delv:    0.70
+RA---SIN DEC--SIN VELO-LSR   0.00  0.00  0.00 freq:346.52847 unit:JY/BEAM
+beam:   1.4   1.2  63.0 niters:   4274 K/Jy:     5.97 cbof:  48.39
+ cut( 1) x=   1.125 y=   0.099 pa= 104.676
+ cut( 2) x=  -0.059 y=  -0.230 pa=  36.634

@@ -1,0 +1,14 @@
+
+Peak pixel   : (61,64,1) = 2.1168E+00
+
+Fitted pixel : (60.97,63.96,1) = 2.1142E+00
+
+Offsets from reference pixel :
+  Axis 1: Fitted pixel offset = 1.20846594E+00 arcsec
+  Axis 2: Fitted pixel offset = -3.11404704E-01 arcsec
+  Axis 3:        pixel offset = 0.00000000E+00 offset GHz
+
+Coordinate:
+  Axis 1: Fitted RA---SIN  =   9:47:57.464
+  Axis 2: Fitted DEC--SIN  =  13:16:43.39
+  Axis 3:        FREQ-LSR  = 3.38499542E+02 GHz

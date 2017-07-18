@@ -1,0 +1,56 @@
+Procedure:
+
+1. Load the data 
+i) IDL: readdata, apply_tsys, idl2miriad
+ii) If MIRIAD: smalod
+
+2. Combine
+i) IDL: it contains sources separately, join with uvcal
+ii) MIRIAD: just uvcal on the previous smalod'ed file
+
+Rest of the steps in Miriad
+
+3. Recompute chi if needed
+-- Put in mount,telescop,evector via PUTHD
+-- Use UVREDO to recompute chi
+
+4. Initial Flagging
+-- Pointing
+-- Edge
+-- Obvious issues such as a dead antenna, untuned antenna, not tracking 
+antenna, rebooting antenna
+
+5. Tsys (Ignore if already done in IDL)
+-- Flag obvious bad Tsys points
+-- write out new file that does not contain the flagged Tsys values
+-- smafix and apply the Tsys
+
+6. Bandpass
+-- Flag only the bad points in the bandpass cal
+-- mfcal 
+-- apply bandpass via uvcal
+
+7. Flux 
+-- Flag only the bad points in the flux cal
+-- Determine flux scale for the different sources, using UVFLUX
+-- Apply this with uvcal via the scale=
+
+8. Polarization Calibration
+-- Write out data for polcal only; average in channel space
+-- Flag bad points in polcal
+-- Average in time  
+-- Solve with GPCAL
+
+9. Gain Calibration
+-- Write out data for gcal only; average in channel space
+-- Flag bad points in gcal
+-- Average in time  
+-- Solve with SELFCAL/MFCAL
+-- Put in breaks with GPBREAK
+
+10. Apply to source
+-- Write out data for source only; do NOT average in channel space
+-- Flag bad points in source
+-- Average in time  
+-- Apply leakages via GPCOPY
+-- Apply gains via GPCOPY

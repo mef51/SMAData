@@ -1,0 +1,4 @@
+300 Rx on antenna 7 started going berserk but there is nothing in the log. 
+
+Mystery is solved: Leaking during the track like crazy.
+

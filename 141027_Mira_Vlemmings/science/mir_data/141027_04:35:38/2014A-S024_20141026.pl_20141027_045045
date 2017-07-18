@@ -1,0 +1,113 @@
+#!/usr/bin/perl -w
+{ BEGIN {$^W =0}
+#
+################## Script Header Info #####################
+#
+# Experiment Code: 2014A-S024
+# Experiment Title: The magnetic field of binary evolved stars
+# PI: Wouter Vlemmings
+# Contact Person: Wouter Vlemmings
+# Email  : wouter.vlemmings@chalmers.se
+# Office :    (+46) (0)31 7725509
+# Array  : compact   
+#
+############## SPECIAL INSTRUCTIONS ################
+#
+#
+# !!! Antennas chosen in $pants for cross RX calibration MUST BE IN THE ARRAY !!!
+#
+#
+####################  PRIMING  ####################
+# observe -s Mira -r 02:19:20.7921 -d -02:58:39.4956 -e 2000 -v 47.0
+# dopplerTrack -r 342.88295 -u -s 5 -R h -r 342.88295 -u -s 5
+# restartCorrelator -R l -s128 -R h -s128
+# setFeedOffset -f 345
+
+################## Pointing ###############################
+#
+# Pointing: At start of track
+# Syntax Example: point -i 60 -r 3 -L -l -t -Q
+#
+
+############### SOURCE, CALIBRATOR and LIMITS ##############
+#
+# set scan time
+$inttime="15";
+#
+# choose which antennas with waveplates crossed during the cross RX calibration
+# !!! Antennas chosen MUST BE IN THE ARRAY !!!
+$pants='1,7';
+
+$bpass0="3C454.3"; $nbpass0="40";
+$bpasspol0="3C454.3_LR"; $nbpasspol0="10";
+
+$bpass1="3C84"; $nbpass1="40";
+$bpasspol1="3C84_LR"; $nbpasspol1="10";
+
+#source
+$targ0="Mira -r 02:19:20.7921 -d -02:58:39.4956 -e 2000 -v 47.0"; $ntarg0="80";
+$cal0="0224+069"; $ncal0="10";
+$calpol0="0224+069_LR"; $ncalpol0="10";
+
+$flux0="uranus"; $nflux0="60";
+$flux1="uranus"; $nflux1="60";
+
+$MINEL_TARG = 17; $MAXEL_TARG = 81;
+$MINEL_GAIN = 17; $MAXEL_GAIN = 81;
+$MINEL_FLUX = 17; $MAXEL_FLUX = 81;
+$MINEL_BPASS= 17; $MAXEL_BPASS= 87;
+$MINEL_CHECK= 20;
+##############################
+###########################
+
+do 'sma.pl';
+do 'sma_add_test.pl';
+checkANT();
+command("radio");
+command("integrate -t $inttime");
+$myPID=$$;
+command("project -r -p 'Wouter Vlemmings' -d '2014A-S024'");
+print "----- initialization done, starting script -----\n";
+
+
+print "###############################################\n";
+print "### Polarization Calibration loop on 3c454.3 #####\n";
+print "###############################################\n";
+$LST_start=17.0; $LST_end=21.5;
+&DoPolPass(bpass0,nbpass0,bpasspol0,nbpasspol0);
+#
+print "####################################################\n";
+print "######### flux Calibration loop on Uranus #######\n";
+print "####################################################\n";
+$LST_start=21.4; $LST_end=22.0;
+&DoPolFlux(flux0,nflux0);
+#
+print "###############################################\n";
+print "### Polarization Calibration loop on 3c454.3 #####\n";
+print "###############################################\n";
+$LST_start=21.9; $LST_end=00.0;
+&DoPolPass(bpass0,nbpass0,bpasspol0,nbpasspol0);
+#
+print "###############################################\n";
+print "########### Main loop Mira    ############\n";
+print "###############################################\n";
+
+$LST_start=23.9; $LST_end=7.5;
+&DualPolLoop(calpol0,ncalpol0,cal0,ncal0,targ0,ntarg0);
+#
+# end the loop with cal0
+command("observe -s $cal0 -n $calpol0");
+command("tsys");
+command("rotateWaveplate -s L");
+command("rotateWaveplate -a $pants -s R");
+command("integrate -s 7 -w");
+#
+print "#########################################\n";
+print "## Polarization Calibration loop on 3C84 ##\n";
+print "#########################################\n";
+$LST_start=7.0; $LST_end=10.5;
+&DoPolPass(bpass1,nbpass1,bpasspol1,nbpasspol1);
+#
+print "----- Congratulations!  This is the end of the script.  -----\n";}
+#
+################## File End ###############################

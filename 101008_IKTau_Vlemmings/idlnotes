@@ -1,0 +1,28 @@
+readdata,dir='/sma/data/science/mir_data.2010/101008_02:59:22/'
+
+Inspect data etc...
+Plot var Tsys looks OK
+
+apply_tsys
+uti_avgband,/all
+mir_save,'all-tsys'
+
+
+.compile idl2miriad
+
+idl2miriad,source='neptune',sideband='l',dir='neptune.lsb',polar=1
+idl2miriad,source='neptune',sideband='u',dir='neptune.usb',polar=1
+
+idl2miriad,source='callisto',sideband='l',dir='callisto.lsb',polar=1
+idl2miriad,source='callisto',sideband='u',dir='callisto.usb',polar=1
+
+idl2miriad,source='3c454.3',sideband='l',dir='3c454.3.lsb',polar=1
+idl2miriad,source='3c454.3',sideband='u',dir='3c454.3.usb',polar=1
+
+idl2miriad,source='0423-013',sideband='l',dir='0423-013.lsb',polar=1
+idl2miriad,source='0423-013',sideband='u',dir='0423-013.usb',polar=1
+
+idl2miriad,source='IKTau',sideband='l',dir='IKTau.lsb',polar=1
+idl2miriad,source='IKTau',sideband='u',dir='IKTau.usb',polar=1
+
+

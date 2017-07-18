@@ -1,0 +1,155 @@
+Data Reduction 130831
+
+# Initializations
+$ source /sma/local/mir/setup
+$ source /sma/reduction/rrao/miriad64/hilodr1/miriad-4.2.3/MIRRC.linux
+$ idl
+.r /sma/reduction/rrao/idl/idlinit
+idlinit
+
+# Load the data
+readdata,dir='/sma/data/science/mir_data.2013/130831_04:32:06/'
+select             
+All Sources:   titan 1751+096 B335 1927+739 L1157 CB230 0102+584 3c84 L1448-2A
+L1448N
+All Baselines:  2-4 2-5 2-6 2-7 2-8 4-5 4-6 4-7 4-8 5-6 5-7 5-8 6-7 6-8 7-8
+All Recs:  230 345 400 690
+All Bands:  c1 s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12 s13 s14 s15 s16
+s17 s18 s19 s20 s21 s22 s23 s24
+All Sidebands :  l u
+All Polarization states:  hh vv hv vh
+All Integrations: 0-1613
+
+# Baseline correction
+select,/reset
+sma_cal_bas
+Enter the current ANTENNAS file: /sma/data/science/mir_data.2013/130831_04:32:06/antennas
+       1.0000000       0.0000000       0.0000000       0.0000000
+       2.0000000       0.0000000       0.0000000       0.0000000
+       3.0000000      -6.3989060      -68.002715       3.6384180
+       4.0000000       2.7361840      -23.744486      -7.7545620
+       5.0000000      -4.4423670      -10.094184       12.237342
+       6.0000000     -0.50837600      -25.152328       1.2810870
+       7.0000000      -5.7017690      -18.985299       15.611544
+       8.0000000       1.9577090      -7.4636370      -5.4995470
+Enter the new ANTENNAS file: ./antennas-corrected
+       1.0000000       0.0000000       0.0000000  1.6085007e-154
+       2.0000000      -0.0000000       0.0000000       0.0000000
+       3.0000000      -6.3989060      -68.002715       3.6384180
+       4.0000000       2.7361840      -23.744486      -7.7545620
+       5.0000000      -4.4423670      -10.094184       12.237342
+       6.0000000     -0.50837600      -25.152328       1.2810870
+       7.0000000      -5.7017690      -18.985299       15.611544
+       8.0000000       1.9577090      -7.4636370      -5.4995470
+select,/p,/re
+mir_save,’baseline_corrected’
+
+# Tsys Inspection
+plot_var,x=’int’
+
+# bad Tsys
+select,/p,/re
+dfilter,'"blcd" like "5" and "int" eq "636"'
+flag,/flag
+select,/p,/re
+dfilter,'"blcd" like "2"'
+dfilter,'"int" ge "585" and "int" le "589"'
+flag,/flag
+select,/p,/re
+
+Also Tsys on 2 and 4 look noisy. Lets replace both with 6
+
+2-4 → 5-6
+2-5 → 5-6
+2-6 → 5-6
+2-7 → 6-7
+2-8 → 6-8
+4-5 → 5-6
+4-6 → 5-6
+4-7 → 6-7
+4-8 → 6-8
+
+select,baseline='5-6',/reset
+t56=sp[psf].tssb
+select,baseline='6-7',/reset
+t67=sp[psf].tssb
+select,baseline='6-8',/reset
+t68=sp[psf].tssb
+select,baseline='2-4',/reset
+sp[psf].tssb=t56
+select,baseline='2-5',/reset
+sp[psf].tssb=t56
+select,baseline='2-6',/reset
+sp[psf].tssb=t56
+select,baseline='2-7',/reset
+sp[psf].tssb=t67
+select,baseline='2-8',/reset
+sp[psf].tssb=t68
+select,baseline='4-5',/reset
+sp[psf].tssb=t56
+select,baseline='4-6',/reset
+sp[psf].tssb=t56
+select,baseline='4-7',/reset
+sp[psf].tssb=t67
+select,baseline='4-8',/reset
+sp[psf].tssb=t68
+select,/p,/re  
+
+Also bad tsys for the following
+dfilter,'"blcd" eq "2-4" or "blcd" eq "2-6" or "blcd" eq "4-6"'
+dfilter,'"int" ge "670" and "int" le "735"'
+flag,/flag
+select,/p,/re
+
+apply_tsys
+uti_avgband
+mir_save,'tsys'
+
+# Miriad
+# titan 1751+096 B335 1927+739 L1157 CB230 0102+584 3c84 L1448-2A L1448N
+.compile /sma/reduction/rrao/idl/idl2mir_rr.pro
+select,/p,/re
+select,rx='345',/p,/re
+idl2miriad,source='titan',sideband='u',dir='titan_3x3.usb',polar=1
+idl2miriad,source='titan',sideband='l',dir='titan_3x3.lsb',polar=1
+idl2miriad,source='1751+096',sideband='u',dir='1751+096_3x3.usb',polar=1
+idl2miriad,source='1751+096',sideband='l',dir='1751+096_3x3.lsb',polar=1
+idl2miriad,source='B335',sideband='u',dir='B335_3x3.usb',polar=1
+idl2miriad,source='B335',sideband='l',dir='B335_3x3.lsb',polar=1
+idl2miriad,source='1927+739',sideband='u',dir='1927+739_3x3.usb',polar=1
+idl2miriad,source='1927+739',sideband='l',dir='1927+739_3x3.lsb',polar=1
+idl2miriad,source='L1157',sideband='u',dir='L1157_3x3.usb',polar=1
+idl2miriad,source='L1157',sideband='l',dir='L1157_3x3.lsb',polar=1
+idl2miriad,source='CB230',sideband='u',dir='CB230_3x3.usb',polar=1
+idl2miriad,source='CB230',sideband='l',dir='CB230_3x3.lsb',polar=1
+idl2miriad,source='0102+584',sideband='u',dir='0102+584_3x3.usb',polar=1
+idl2miriad,source='0102+584',sideband='l',dir='0102+584_3x3.lsb',polar=1
+idl2miriad,source='3c84',sideband='u',dir='3c84_3x3.usb',polar=1
+idl2miriad,source='3c84',sideband='l',dir='3c84_3x3.lsb',polar=1
+idl2miriad,source='L1448-2A',sideband='u',dir='L1448-2A_3x3.usb',polar=1
+idl2miriad,source='L1448-2A',sideband='l',dir='L1448-2A_3x3.lsb',polar=1
+idl2miriad,source='L1448N',sideband='u',dir='L1448N_3x3.usb',polar=1
+idl2miriad,source='L1448N',sideband='l',dir='L1448N_3x3.lsb',polar=1
+select,rx='400',/p,/re
+idl2miriad,source='titan',sideband='u',dir='titan_4x4.usb',polar=1
+idl2miriad,source='titan',sideband='l',dir='titan_4x4.lsb',polar=1
+idl2miriad,source='1751+096',sideband='u',dir='1751+096_4x4.usb',polar=1
+idl2miriad,source='1751+096',sideband='l',dir='1751+096_4x4.lsb',polar=1
+idl2miriad,source='B335',sideband='u',dir='B335_4x4.usb',polar=1
+idl2miriad,source='B335',sideband='l',dir='B335_4x4.lsb',polar=1
+idl2miriad,source='1927+739',sideband='u',dir='1927+739_4x4.usb',polar=1
+idl2miriad,source='1927+739',sideband='l',dir='1927+739_4x4.lsb',polar=1
+idl2miriad,source='L1157',sideband='u',dir='L1157_4x4.usb',polar=1
+idl2miriad,source='L1157',sideband='l',dir='L1157_4x4.lsb',polar=1
+idl2miriad,source='CB230',sideband='u',dir='CB230_4x4.usb',polar=1
+idl2miriad,source='CB230',sideband='l',dir='CB230_4x4.lsb',polar=1
+idl2miriad,source='0102+584',sideband='u',dir='0102+584_4x4.usb',polar=1
+idl2miriad,source='0102+584',sideband='l',dir='0102+584_4x4.lsb',polar=1
+idl2miriad,source='3c84',sideband='u',dir='3c84_4x4.usb',polar=1
+idl2miriad,source='3c84',sideband='l',dir='3c84_4x4.lsb',polar=1
+idl2miriad,source='L1448-2A',sideband='u',dir='L1448-2A_4x4.usb',polar=1
+idl2miriad,source='L1448-2A',sideband='l',dir='L1448-2A_4x4.lsb',polar=1
+idl2miriad,source='L1448N',sideband='u',dir='L1448N_4x4.usb',polar=1
+idl2miriad,source='L1448N',sideband='l',dir='L1448N_4x4.lsb',polar=1
+
+

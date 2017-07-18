@@ -1,0 +1,41 @@
+Mon Oct 27 17:29:30 2014 (root): /application/bin/newFile -S 
+Mon Oct 27 17:29:29 2014 (root): restartCorrelator -s128 
+Mon Oct 27 17:29:18 2014 (daemon): setLO: sending "rfpower1 20" to acc7
+Mon Oct 27 17:29:18 2014 (daemon): setLO: sending "rfpower0 -d" to acc7
+Mon Oct 27 17:28:53 2014 (daemon): setLO: sending "rfpower1 20" to acc2
+Mon Oct 27 17:28:53 2014 (daemon): setLO: sending "rfpower0 -d" to acc2
+Mon Oct 27 17:28:35 2014 (daemon): setLO: sending "rfpower1 20" to acc5
+Mon Oct 27 17:28:35 2014 (daemon): setLO: sending "rfpower0 -d" to acc5
+Mon Oct 27 17:28:30 2014 (daemon): setLO: sending "rfpower1 20" to acc3
+Mon Oct 27 17:28:30 2014 (daemon): setLO: sending "rfpower0 -d" to acc3
+Mon Oct 27 17:28:09 2014 (daemon): setLO: sending "rfpower1 20" to acc1
+Mon Oct 27 17:28:09 2014 (daemon): setLO: sending "rfpower0 -d" to acc1
+Mon Oct 27 17:28:03 2014 (daemon): setLO: sending "rfpower1 20" to acc8
+Mon Oct 27 17:28:03 2014 (daemon): setLO: sending "rfpower0 -d" to acc8
+Mon Oct 27 17:27:25 2014 (daemon): setLO: sending "rfpower1 20" to acc4
+Mon Oct 27 17:27:25 2014 (daemon): setLO: sending "rfpower0 -d" to acc4
+Mon Oct 27 17:26:23 2014 (daemon): setLO: sending "tune -f0 225.55 -h0 18 -B 2" to acc7
+Mon Oct 27 17:26:23 2014 (daemon): setLO: sending "zt0" to acc7
+Mon Oct 27 17:26:23 2014 (daemon): setLO: sending "tune -f0 225.55 -h0 18 -B 2" to acc4
+Mon Oct 27 17:26:23 2014 (daemon): setLO: sending "tune -f0 225.55 -h0 18 -B 2" to acc1
+Mon Oct 27 17:26:23 2014 (daemon): setLO: sending "zt0" to acc4
+Mon Oct 27 17:26:23 2014 (daemon): setLO: sending "zt0" to acc1
+Mon Oct 27 17:26:23 2014 (daemon): setLO: sending "tune -f0 225.55 -h0 18 -B 2" to acc8
+Mon Oct 27 17:26:23 2014 (daemon): setLO: sending "tune -f0 225.55 -h0 18 -B 2" to acc3
+Mon Oct 27 17:26:22 2014 (daemon): setLO: sending "zt0" to acc8
+Mon Oct 27 17:26:22 2014 (daemon): setLO: sending "zt0" to acc3
+Mon Oct 27 17:26:22 2014 (daemon): setLO: sending "tune -f0 225.55 -h0 18 -B 2" to acc5
+Mon Oct 27 17:26:22 2014 (daemon): setLO: sending "tune -f0 225.55 -h0 18 -B 2" to acc2
+Mon Oct 27 17:26:22 2014 (daemon): setLO: sending "zt0" to acc5
+Mon Oct 27 17:26:22 2014 (daemon): setLO: sending "zt0" to acc2
+Mon Oct 27 17:24:50 2014 (root): dopplerTrack -s8 -u -r 230.2 -s32 -u -r 234.2 -h18 
+Mon Oct 27 17:23:05 2014 (root): observe -s vycma 
+Mon Oct 27 17:22:58 2014 (root): standby 
+Mon Oct 27 17:22:33 2014 (root): tune -c activate -g -l 0 -h 5 
+Mon Oct 27 17:22:24 2014 (root): project -p SMA -o Taco -l Cambridge -d SWARM Tests -s 1 -a 1,2,3,4,5,7,8 -R l 
+Mon Oct 27 17:06:04 2014 (shostler): configureCorrelatorLOs 
+Mon Oct 27 17:06:03 2014 (shostler): /global/bin/killdaemon newdds dDSServer QUIT
+Mon Oct 27 17:06:03 2014 (shostler): /global/bin/killdaemon crate int_server QUIT
+Mon Oct 27 17:06:02 2014 (shostler): /global/bin/killdaemon m5 c1DCIFServer restart
+Mon Oct 27 17:06:02 2014 (shostler): /global/bin/killdaemon hal9000 setLO restart
+Mon Oct 27 17:05:56 2014 (shostler): /application/bin/newFile -D garb 

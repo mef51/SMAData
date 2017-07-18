@@ -1,0 +1,33 @@
+readdata,dir='/sma/data/science/mir_data.2013/130824_02:45:01'
+mir_save,'first_part'
+readdata,dir='/sma/data/science/mir_data.2013/130824_06:55:26'
+mir_save,'second_part'
+sma_dat_merge
+OUTPUT is: both_parts_merged
+
+mir_restore,'both_parts_merged'
+select,/p,/re
+
+apply_tsys
+.compile idl2miriad
+
+idl2miriad,source='titan',dir='titan.usb',polar=1,sideband='u'
+idl2miriad,source='titan',dir='titan.lsb',polar=1,sideband='l'
+
+idl2miriad,source='1751+096',dir='1751+096.usb',polar=1,sideband='u'
+idl2miriad,source='1751+096',dir='1751+096.lsb',polar=1,sideband='l'
+
+idl2miriad,source='smc.6',dir='smc.6.usb',polar=1,sideband='u'
+idl2miriad,source='smc.6',dir='smc.6.lsb',polar=1,sideband='l'
+
+idl2miriad,source='bllac',dir='bllac.usb',polar=1,sideband='u'
+idl2miriad,source='bllac',dir='bllac.lsb',polar=1,sideband='l'
+
+idl2miriad,source='neptune',dir='neptune.usb',polar=1,sideband='u'
+idl2miriad,source='neptune',dir='neptune.lsb',polar=1,sideband='l'
+
+idl2miriad,source='uranus',dir='uranus.usb',polar=1,sideband='u'
+idl2miriad,source='uranus',dir='uranus.lsb',polar=1,sideband='l'
+
+idl2miriad,source='3c84',dir='3c84.usb',polar=1,sideband='u'
+idl2miriad,source='3c84',dir='3c84.lsb',polar=1,sideband='l'

@@ -1,0 +1,12 @@
+Will plot unflagged data
+
+
+File # 1  = 080106_rx1.lsb.tsys
+080106_rx1.lsb.tsys 337.4414 GHz
+Read       4 visibilities from all files
+
+Baseline   5-  8  plot      4 points
+5.76785E+04 7.02073E+00
+5.77560E+04 6.89042E+00
+5.76981E+04 7.91464E+00
+5.77754E+04 6.69723E+00

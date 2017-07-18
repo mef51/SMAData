@@ -1,0 +1,318 @@
+#! /bin/csh -f
+#
+
+set suffix=4x4
+set suffix=4x3
+set suffix=3x4
+set suffix=3x3
+
+set gcal=1751+096
+set polcal=3c454.3
+
+set dt=$2
+set source=$3
+set suffix=$4
+
+set so=$source"_""$dt"_"$suffix"
+set imsel='-ant(1)'
+
+set separatesb="n"
+
+set imsize=256
+set cell=0.5
+
+set regdisp='arcsec,box(-10,-10,20,10)'
+set regdisp='arcsec,box(-16,-16,16,16)'
+set region='arcsec,box(-4,-4,4,4)'
+set region=quart
+set region=@"$source".region
+set regdisp='im(1)'
+set regdisp='arcsec,box(-12,-10,8,10)'
+set regdisp='arcsec,box(-6,-6,16,16)'
+set regdisp='arcsec,box(-5,-5,5,5)'
+set regdisp='arcsec,box(-16,-16,16,16)'
+set regdisp='arcsec,box(-6,-6,6,6)'
+set regdisp='arcsec,box(-4,-4,4,4)'
+set regdisp='im(1)'
+set regdisp=quart
+set regdisp='arcsec,box(-8,-8,8,8)'
+set regdisp='arcsec,box(-12,-12,12,12)'
+set niters=4000
+#set gain=0.3
+#set so=1733-130_$dt
+
+
+if($#argv<1) then
+echo "Incorrect usage: Needs start_pt "
+echo "script.csh DISP "
+goto terminate
+endif
+
+goto $1
+
+
+goto terminate
+
+GETDATA:
+if($suffix == "3x3") then
+\rm -fr test1_rxl.?sb
+smalod in=/sma/rtdata/science/mir_data/130903_03:46:51/ out=test1 rxif=-1 options=circular sideband=2
+else
+\rm -fr test1_rxh.?sb
+smalod in=/sma/rtdata/science/mir_data/130903_03:46:51/ out=test1 rxif=-2 options=circular sideband=2
+endif
+goto terminate
+
+COMBINE:
+foreach sb(lsb usb)
+\rm -fr combined_"$suffix".$sb 
+if($suffix == "3x3") then
+uvaver vis=test1_rxl.$sb  out=combined_"$suffix".$sb
+else
+uvaver vis=test1_rxh.$sb  out=combined_"$suffix".$sb
+endif
+end
+goto terminate
+
+#
+# The next uvswap step is needed because we are using the 400 receiver
+# In this case, the L and R polarizations are swapped compared to the 345
+#
+# This is very confusing. Just check the parallactic angle to make 
+# sure that it is correct.
+#
+
+UVSWAP:
+
+EVEC:
+foreach sb(lsb usb)
+puthd in=combined.$sb/mount value=4
+puthd in=combined.$sb/telescop value=sma
+puthd in=combined.$sb/evector value=-0.785398
+
+\rm -fr combined.$sb.chi
+uvredo vis=combined.$sb options=chi out=combined.$sb.chi
+end
+goto terminate
+
+uvswap2 vis=combined_"$suffix".$sb.swap out=combined_"$suffix".$sb.bp.aver options=xyswap
+
+### FLAG NOTES
+# OK: 2-4 4-6 4-7 4-8 5-7 5-8 6-8 
+# BAD
+# between 4:45 to 5:20, 6:00 to end
+#  2-5 2-6 2-7 2-8 4-5 5-6 6-7 7-8
+
+FLAG:
+foreach sb(lsb usb)
+uvflag vis=combined_"$suffix".$sb edge=4 flagval=f 
+uvflag vis=combined_"$suffix".$sb select='-pol(ll,lr,rl,rr)'  flagval=f 
+uvflag vis=combined_"$suffix".$sb select='time(05:49:06,06:02:15)'  flagval=f 
+uvflag vis=combined_"$suffix".$sb select='time(04:45,05:20),ant(2)(5,6,7,8)' flagval=f
+uvflag vis=combined_"$suffix".$sb select='time(06:00,09:00),ant(2)(5,6,7,8)' flagval=f
+uvflag vis=combined_"$suffix".$sb select='time(04:45,05:20),ant(5)(4,6)' flagval=f
+uvflag vis=combined_"$suffix".$sb select='time(06:00,09:00),ant(5)(4,6)' flagval=f
+uvflag vis=combined_"$suffix".$sb select='time(04:45,05:20),ant(7)(6,8)' flagval=f
+uvflag vis=combined_"$suffix".$sb select='time(06:00,09:00),ant(7)(6,8)' flagval=f
+
+\rm -fr combined_"$suffix"_unflgd.$sb
+uvaver vis=combined_"$suffix".$sb out=combined_"$suffix"_unflgd.$sb
+end
+goto terminate
+
+TSYS:
+foreach sb(lsb usb)
+\rm -fr combined_"$suffix"_tsys.$sb
+smafix vis=combined_"$suffix"_unflgd.$sb out=combined_"$suffix"_tsys.$sb device=/xw bant=2,4,5 gant=7 dofit=2 options=tsyscorr,tsysswap,dosour
+end
+goto terminate
+
+BPCAL:
+foreach sb(lsb usb)
+smamfcal select='so(1751+096),pol(ll,rr)' options=opolyfit,averrll polyfit=1 refant=4 interval=30,30 vis=combined_"$suffix"_tsys.$sb  line=ch,192,1,16,16
+end
+goto terminate
+
+APPLYBP:
+foreach sb(lsb usb)
+\rm -fr combined_"$suffix".$sb.bp
+uvaver vis=combined_"$suffix"_tsys.$sb out=combined_"$suffix".$sb.bp options=nocal
+end
+goto terminate
+
+
+AVER:
+foreach sb(lsb usb)
+if($suffix == "3x3") then
+\rm -fr combined_"$suffix".$sb.bp.aver
+uvaver vis=combined_"$suffix".$sb.bp out=combined_"$suffix".$sb.bp.aver line=ch,1,1,3072
+else
+\rm -fr combined_"$suffix".$sb.bp.aver \rm -fr combined_"$suffix".$sb.swap
+uvaver vis=combined_"$suffix".$sb out=combined_"$suffix".$sb.swap line=ch,1,1,3072
+endif
+end
+goto terminate
+
+
+EVEC:
+foreach sb(lsb usb)
+
+if($suffix == "3x3") then
+puthd in=combined_"$suffix".$sb.bp.aver/evector value=0.7853
+else
+puthd in=combined_"$suffix".$sb.bp.aver/evector value=-0.7853
+endif
+
+puthd in=combined_"$suffix".$sb.bp.aver/mount value=4
+puthd in=combined_"$suffix".$sb.bp.aver/telescop value=sma
+
+\rm -fr combined_"$suffix".$sb.chi
+uvredo vis=combined_"$suffix".$sb.bp.aver options=chi out=combined_"$suffix".$sb.chi
+end
+goto terminate
+
+
+SPLIT:
+foreach sb(lsb usb)
+foreach so(1751+096 smc.6)
+echo $so
+\rm -fr "$so""_""$dt""_""$suffix".$sb
+uvaver vis=combined_"$suffix".$sb.chi select='so('$so')' interval=5 out="$so""_""$dt"_"$suffix".$sb
+end
+end
+goto terminate
+
+POLCAL:
+foreach sb(lsb usb)
+gpcal vis=$polcal"_""$dt"_"$suffix".$sb  refant=2 options=circular,qusolve interval=20 flux=1  
+end
+goto terminate
+
+
+
+GCAL:
+foreach sb(lsb usb)
+mfcal vis=$gcal"_"$dt"_"$suffix.$sb select='pol(ll,rr)' refant=2 options=nopassol  interval=20
+gpcopy vis=$gcal"_"$dt"_"$suffix.$sb out=$source"_""$dt"_"$suffix".$sb options=nopol
+gpcopy vis=../130906/$polcal"_"130906"_"$suffix.$sb out=$source"_"$dt"_"$suffix.$sb  options=nocal
+end
+goto terminate
+
+INVERT:
+foreach sb(lsb usb)
+\rm -fr $so.$sb.?.mp $so.$sb.bm 
+set imvis=$so.$sb
+set imvis=$so.$sb,../120523/"$source"_120523.$sb
+invert vis=$imvis imsize=$imsize cell=$cell options=systemp   \
+       map=$so.$sb.i.mp,$so.$sb.q.mp,$so.$sb.u.mp \
+       stokes=i,q,u beam=$so.$sb.bm robust=2.0 select=$imsel
+#taper=1
+end
+goto terminate
+
+
+CLEAN:
+foreach sb(lsb usb)
+foreach pol(i q u)
+\rm -fr $so.$sb.$pol.cl $so.$sb.$pol.cm
+clean map=$so.$sb.$pol.mp beam=$so.$sb.bm  \
+      out=$so.$sb.$pol.cl region=$region niters=$niters cutoff=0.005
+restor map=$so.$sb.$pol.mp beam=$so.$sb.bm \
+      out=$so.$sb.$pol.cm model=$so.$sb.$pol.cl
+end
+end
+
+goto terminate
+
+INVERTBOTHSB:
+\rm -fr $so.?.mp $so.bm 
+set imvis=$so.lsb,$so.usb
+set imvis=$so.lsb,../120523/"$source"_120523.lsb,$so.usb,../120523/"$source"_120523.usb
+set imvis=../120523/"$source"_120523.lsb,../120523/"$source"_120523.usb,../120525/"$source"_120525.lsb,../120525/"$source"_120525.usb,$so.lsb,$so.usb
+
+invert vis=$imvis  \
+       map=$so.i.mp,$so.q.mp,$so.u.mp \
+       stokes=i,q,u options=mfs,systemp  imsize=$imsize cell=$cell \
+       beam=$so.bm  sup=0 select=$imsel
+
+
+foreach pol(i q u)
+\rm -fr $so.$pol.cl $so.$pol.cm
+clean map=$so.$pol.mp beam=$so.bm \
+      out=$so.$pol.cl region=$region niters=10000 cutoff=0.002
+restor map=$so.$pol.mp beam=$so.bm \
+      out=$so.$pol.cm model=$so.$pol.cl
+end
+
+goto terminate
+
+INVERTALL:
+#set so=$source"_""$dt"_"all"
+\rm -fr $so.?.mp $so.bm 
+set imvis=../061223/ni4b_061223.lsb,../061223/ni4b_061223.usb
+set imvis=$source"_""$dt"_3x3.lsb,$source"_""$dt"_3x3.usb,$source"_""$dt"_3x4.lsb,$source"_""$dt"_3x4.usb,$source"_""$dt"_4x3.lsb,$source"_""$dt"_4x3.usb,$source"_""$dt"_4x4.lsb,$source"_""$dt"_4x4.usb
+set imvis=../061223/ni4b_061223.lsb,../061223/ni4b_061223.usb,$source"_""$dt"_3x3.lsb,$source"_""$dt"_3x3.usb,$source"_""$dt"_3x4.lsb,$source"_""$dt"_3x4.usb,$source"_""$dt"_4x3.lsb,$source"_""$dt"_4x3.usb,$source"_""$dt"_4x4.lsb,$source"_""$dt"_4x4.usb
+set imvis=$source"_""$dt"_3x3.lsb,$source"_""$dt"_3x3.usb,$source"_""$dt"_4x4.lsb,$source"_""$dt"_4x4.usb
+set imvis=$source"_""$dt"_4x4.lsb,$source"_""$dt"_4x4.usb
+set imvis=$source"_""$dt"_3x3.lsb,$source"_""$dt"_3x3.usb
+if($suffix == "all") then
+set imvis=$source"_""$dt"_3x3.lsb,$source"_""$dt"_3x3.usb,$source"_""$dt"_4x4.lsb,$source"_""$dt"_4x4.usb
+else
+set imvis=$source"_""$dt"_"$suffix".lsb,$source"_""$dt"_"$suffix".usb
+endif
+
+
+invert vis=$imvis  \
+       map=$so.i.mp,$so.q.mp,$so.u.mp \
+       stokes=i,q,u options=mfs,systemp  imsize=$imsize cell=$cell \
+       beam=$so.bm  robust=0 select=$imsel
+
+
+foreach pol(i q u)
+\rm -fr $so.$pol.cl $so.$pol.cm
+clean map=$so.$pol.mp beam=$so.bm \
+      out=$so.$pol.cl region=$region niters=10000 cutoff=0.002
+restor map=$so.$pol.mp beam=$so.bm \
+      out=$so.$pol.cm model=$so.$pol.cl
+end
+
+goto terminate
+
+
+
+IMP:
+
+#set so=$source"_""$dt"_"all"
+set sncutI=100
+set sncutQ=3.0
+set sigmaQ=0.002
+set sigmaQ=0.005
+\rm -fr $so.poli $so.polierr $so.polm $so.polmerr $so.pa $so.paerr $so.unif
+impol in=$so.q.mp,$so.u.mp,$so.i.cm sigma=$sigmaQ,$sigmaQ sncut=$sncutQ,$sncutI \
+      poli=$so.poli,$so.polierr polm=$so.polm,$so.polmerr \
+      pa=$so.pa,$so.paerr
+maths exp=$so.polm/$so.polm mask=$so.polm out=$so.unif
+
+DISP:
+set levs1=-20,-10,-5,5,10,20,30,40,50,60,70,80,90,95
+set dev=/xw
+set device="/xw"
+set device="/cps"
+
+if($device == "/cps") set dev="$so.ps""/cps"
+#cgdisp in=$so.i.cm,$so.i.cm type=c,p,amp,ang \
+cgdisp in=$so.i.cm,$so.poli,$so.poli,$so.pa type=c,p,amp,ang \
+       device="$dev" region=$regdisp \
+       options=full,rot90,beambl,wedge \
+       lines=4,4,6 vecfac=1.5,2,2,0.0 labtyp=arcsec,arcsec  \
+       range=0,0.0,lin,-1  slev=p,1 levs1=$levs1
+
+# csize=1.4,0.8,0.7,0.8\
+#       range=0,0.023,lin,1  
+#slev=a,0.004 levs1=-100,-50,50,100,150,200,250
+#if($device == "/cps") ggv "$so.ps" &
+
+
+
+
+terminate:

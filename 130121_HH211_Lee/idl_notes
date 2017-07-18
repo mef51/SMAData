@@ -1,0 +1,52 @@
+readdata,dir='/sma/rtData/science/mir_data/130120_03:13:51'
+
+select,/p,/re
+
+uti_tsys_fix,tel_bsl='telescope',high=500,low=100,loose=100,/refit,/verbose
+
+#,/nodisplay
+apply_tsys
+
+select,/p,/re
+dfilter,'"iaq" eq "0" and "ibq" eq "0"'
+idl2miriad,source='3c84',dir='../130121/3c84_3x3.usb',sideband='u',polar=1
+
+idl2miriad,source='3c84',dir='../130121/3c84_3x3.lsb',sideband='l',polar=1
+
+idl2miriad,source='3c279',dir='../130121/3c279_3x3.usb',sideband='u',polar=1
+
+idl2miriad,source='3c279',dir='../130121/3c279_3x3.lsb',sideband='l',polar=1
+
+
+select,/p,/re
+dfilter,'"iaq" eq "1" and "ibq" eq "1"'
+idl2miriad,source='3c84',dir='../130121/3c84_4x4.usb',sideband='u',polar=1
+
+idl2miriad,source='3c84',dir='../130121/3c84_4x4.lsb',sideband='l',polar=1
+
+idl2miriad,source='3c279',dir='../130121/3c279_4x4.usb',sideband='u',polar=1
+
+idl2miriad,source='3c279',dir='../130121/3c279_4x4.lsb',sideband='l',polar=1
+
+
+select,/p,/re
+dfilter,'"iaq" eq "0" and "ibq" eq "1"'
+idl2miriad,source='3c84',dir='../130121/3c84_3x4.usb',sideband='u',polar=1
+
+idl2miriad,source='3c84',dir='../130121/3c84_3x4.lsb',sideband='l',polar=1
+
+idl2miriad,source='3c279',dir='../130121/3c279_3x4.usb',sideband='u',polar=1
+
+idl2miriad,source='3c279',dir='../130121/3c279_3x4.lsb',sideband='l',polar=1
+
+select,/p,/re
+dfilter,'"iaq" eq "1" and "ibq" eq "0"'
+idl2miriad,source='3c84',dir='../130121/3c84_4x3.usb',sideband='u',polar=1
+
+idl2miriad,source='3c84',dir='../130121/3c84_4x3.lsb',sideband='l',polar=1
+
+idl2miriad,source='3c279',dir='../130121/3c279_4x3.usb',sideband='u',polar=1
+
+idl2miriad,source='3c279',dir='../130121/3c279_4x3.lsb',sideband='l',polar=1
+
+

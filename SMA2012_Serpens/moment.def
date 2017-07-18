@@ -1,0 +1,5 @@
+in       = MAP_LINES/smc.6.h13co+43.r2bm1.ch.cm
+region   = arcsec,box(-6.0,-3,3,4)
+out      = MAP_LINES/smc.6.h13co+43.m1
+mom      = 1
+clip     = 0.72

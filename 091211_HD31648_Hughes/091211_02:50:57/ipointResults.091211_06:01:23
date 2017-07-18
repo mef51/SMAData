@@ -1,0 +1,32 @@
+iPointing results for 3c84                 started at 06:01:23
+Repetition 1:
+Ant 1	AzOff =   7.4	ElOff =  -4.6	dAz =  -4.6	dEl =   2.2
+Ant 2	AzOff =   5.7	ElOff =   6.0	dAz =  -3.7	dEl =   5.1
+Ant 4	AzOff =   4.1	ElOff =   1.5	dAz =  -8.0	dEl =  -1.0
+Ant 5	AzOff =   7.1	ElOff =  -1.4	dAz =  -4.7	dEl =   0.3
+Ant 6	AzOff =   7.4	ElOff =   1.1	dAz = -11.9	dEl =  -4.3
+Ant 7	AzOff =  -0.2	ElOff =  -3.8	dAz =  -9.0	dEl = -15.4
+Ant 8	AzOff =   1.5	ElOff =  -1.4	dAz = -13.1	dEl = -11.4
+Repetition 2:
+Ant 1	AzOff =   6.8	ElOff =  -5.2	dAz =  -5.3	dEl =   1.7
+Ant 2	AzOff =   5.6	ElOff =   6.4	dAz =  -3.9	dEl =   5.4
+Ant 4	AzOff =   4.7	ElOff =   2.1	dAz =  -7.4	dEl =  -0.4
+Ant 5	AzOff =   9.6	ElOff =  -1.5	dAz =  -2.2	dEl =   0.2
+Ant 6	AzOff =   7.2	ElOff =   0.5	dAz = -12.2	dEl =  -4.9
+Ant 7	AzOff =   0.6	ElOff =  -4.9	dAz =  -8.2	dEl = -16.5
+Ant 8	AzOff =   1.5	ElOff =  -1.7	dAz = -13.2	dEl = -11.7
+Average:
+Ant 1	AzOff =   7.1	ElOff =  -4.9	dAz =  -5.0	dEl =   2.0
+Ant 2	AzOff =   5.6	ElOff =   6.2	dAz =  -3.8	dEl =   5.3
+Ant 4	AzOff =   4.4	ElOff =   1.8	dAz =  -7.7	dEl =  -0.7
+Ant 5	AzOff =   8.3	ElOff =  -1.5	dAz =  -3.5	dEl =   0.3
+Ant 6	AzOff =   7.3	ElOff =   0.8	dAz = -12.0	dEl =  -4.6
+Ant 7	AzOff =   0.2	ElOff =  -4.3	dAz =  -8.6	dEl = -15.9
+Ant 8	AzOff =   1.5	ElOff =  -1.5	dAz = -13.1	dEl = -11.5
+Updating offsets for antenna 1
+Updating offsets for antenna 2
+Updating offsets for antenna 4
+Updating offsets for antenna 5
+Updating offsets for antenna 6
+Updating offsets for antenna 7
+Updating offsets for antenna 8

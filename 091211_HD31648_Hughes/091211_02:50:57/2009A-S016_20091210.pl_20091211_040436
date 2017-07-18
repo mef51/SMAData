@@ -1,0 +1,162 @@
+#!/usr/bin/perl -w
+#
+# Experiment Code: 2009A-S016
+# Experiment Title: Millimeter-Wavelength Signatures of Accretion in Circumstellar Disks
+# PI: Meredith Hughes
+# Contact Person: Meredith Hughes
+# Email  : mhughes@cfa.harvard.edu
+# Office : 617-495-8348
+# Cell   : 401-699-9298
+# Array  : compact
+############## SPECIAL INSTRUCTIONS ################
+#
+# Integration time should be 15s during track
+#
+##### PLEASE CHANGE NUMBER OF ANTENNAS IN NEXT LINE IF NEEDED
+$nants="7";
+#
+####################  PRIMING  ####################
+#
+# restartCorrelator -s128 
+# tune -c "waveplate in"
+# tune -c "hotload in"
+# observe -s mwc480 -r 04:58:46.27 -d 29:50:37.0 -v 0.0 -e 2000
+# dopplerTrack -r 345.796 -u -s13
+# setFeedOffset -f 345
+#
+###################   POINTING  ###################
+#
+# Pointing: Usual post-sunset pointing update
+# Syntax Example: point -i 60 -r 3 -L -l -t -Q
+#
+#
+############### Check for computer ==> Observation/Simulation
+chop($hostname = `hostname`) ;
+if($hostname ne "hal9000") {
+$simul = "y";
+print "Running Simulation\n";
+}
+
+############### CHOOSE PATTERN BASED ON NUMBER OF ANTENNAS ##############
+if($nants eq "8") {
+$ps="polarPattern -p 7 -w -c 1";
+$pc="polarPattern -p 8 -w -c 1";
+}
+
+if($nants eq "7") {
+$ps="polarPattern -p 1 -w -c 1";
+$pc="polarPattern -p 2 -w -c 1";
+}
+
+if($nants eq "6") {
+$ps="polarPattern -p 3 -w -c 1";
+$pc="polarPattern -p 4 -w -c 1";
+}
+
+if($nants eq "5") {
+$ps="polarPattern -p 5 -w -c 1";
+$pc="polarPattern -p 6 -w -c 1";
+}
+
+###### SIMULATION ############################
+if($simul eq "y") {
+        $ps_t="integrate -s 16 -w";
+        $pc_t="integrate -s 8 -w";
+}
+
+############### SOURCE, CALIBRATOR and LIMITS ##############
+#source
+$targ0="mwc480 -r 04:58:46.27 -d 29:50:37.0 -v -0.0 -e 2000";
+$targ1="0510+180";
+$targ2="3c84";
+
+# Gain
+$cal111="3c111";
+
+#pol & bp
+$cal273="3c273";
+$cal279="3c279";
+
+#flux
+$calcal="Callisto";
+$calmars="Mars";
+
+
+$tsys="tsys";
+
+$MINEL_TARG = 17; $MAXEL_TARG = 87;
+$MINEL_GAIN = 17; $MAXEL_GAIN = 87;
+$MINEL_FLUX = 17; $MAXEL_FLUX = 87;
+$MINEL_BPASS= 17; $MAXEL_BPASS= 87;
+$MINEL_CHECK= 17;
+##############################
+###########################
+
+do 'sma.pl';
+do 'sma_add_withpol.pl';
+checkANT();
+command("radio");
+
+if($simul eq "y") {command("integrate -t 20");}
+
+$myPID=$$;
+command("project -r -p 'Meredith Hughes' -d '2009A-S016'");
+print "----- initialization done, starting script -----\n";
+
+print "----- Flux loop -----\n";
+$LST_start=22.0; $LST_end=23.8;
+if($simul eq "y") {
+
+&PolLoop("calcal[tsys,pc,pc_t,pc,pc_t,pc,pc_t]");
+} else {
+        &PolLoop("calcal[tsys,pc,pc,pc]");
+}
+
+print "----- Source Cal loop -----\n";
+$LST_start=23.8; $LST_end=5.2;
+if($simul eq "y") {
+&PolLoop("cal111[tsys,pc,pc_t]","targ0[tsys,ps,ps_t,ps,ps_t]","cal111[tsys,pc,pc_t]","targ0[tsys,ps,ps_t,ps,ps_t]","cal111[tsys,pc,pc_t]","targ0[tsys,ps,ps_t,ps,ps_t]","cal111[tsys,pc,pc_t]","targ1[tsys,ps,ps_t,ps,ps_t]","cal111[tsys,pc,pc_t]","targ2[tsys,ps,ps_t]");
+} else {
+        &PolLoop("cal111[tsys,pc]","targ0[tsys,ps,ps]","cal111[tsys,pc]","targ0[tsys,ps,ps]","cal111[tsys,pc]","targ0[tsys,ps,ps]","cal111[tsys,pc]","targ1[tsys,ps,ps]","cal111[tsys,pc]","targ2[tsys,ps]");
+}
+print "----- Transit loop -----\n";
+$LST_start=5.2; $LST_end=5.5;
+if($simul eq "y") {
+&PolLoop("cal111[tsys,pc,pc_t]","targ0[tsys,ps,ps_t,ps,ps_t]");
+} else {
+        &PolLoop("cal111[tsys,pc]","targ0[tsys,ps,ps]");
+}
+print "----- Source Cal loop -----\n";
+$LST_start=5.5; $LST_end=8.5;
+if($simul eq "y") {
+&PolLoop("cal111[tsys,pc,pc_t]","targ0[tsys,ps,ps_t,ps,ps_t]","cal111[tsys,pc,pc_t]","targ0[tsys,ps,ps_t,ps,ps_t]","cal111[tsys,pc,pc_t]","targ0[tsys,ps,ps_t,ps,ps_t]","cal111[tsys,pc,pc_t]","targ1[tsys,ps,ps_t,ps,ps_t]","cal111[tsys,pc,pc_t]","targ2[tsys,ps,ps_t]");
+} else {
+        &PolLoop("cal111[tsys,pc]","targ0[tsys,ps,ps]","cal111[tsys,pc]","targ0[tsys,ps,ps]","cal111[tsys,pc]","targ0[tsys,ps,ps]","cal111[tsys,pc]","targ1[tsys,ps,ps]","cal111[tsys,pc]","targ2[tsys,ps]");
+}
+$LST_start=8.5; $LST_end=9.9;
+if($simul eq "y") {
+&PolLoop("cal111[tsys,pc,pc_t]","targ0[tsys,ps,ps_t,ps,ps_t]","cal111[tsys,pc,pc_t]","targ0[tsys,ps,ps_t,ps,ps_t]","cal111[tsys,pc,pc_t]","targ0[tsys,ps,ps_t,ps,ps_t]","cal111[tsys,pc,pc_t]","targ1[tsys,ps,ps_t,ps,ps_t]");
+} else {
+        &PolLoop("cal111[tsys,pc]","targ0[tsys,ps,ps]","cal111[tsys,pc]","targ0[tsys,ps,ps]","cal111[tsys,pc]","targ0[tsys,ps,ps]","cal111[tsys,pc]","targ1[tsys,ps,ps]");
+}
+
+print "----- Flux loop -----\n";
+$LST_start=9.9; $LST_end=10.2;
+if($simul eq "y") {
+
+&PolLoop("calmars[tsys,pc,pc_t,pc,pc_t,pc,pc_t]");
+} else {
+        &PolLoop("calmars[tsys,pc,pc,pc]");
+}
+
+
+print "----- BP & Polarization Calibration loop -----\n";
+$LST_start=10.2; $LST_end=15.0;
+if($simul eq "y") {
+       &PolLoop("cal273[tsys,ps,ps_t,ps,ps_t]","cal279[tsys,ps,ps_t,ps,ps_t]");
+} else {
+       &PolLoop("cal273[tsys,ps,ps]","cal279[tsys,ps,ps]");
+}
+
+print "----- Congratulations!  This is the end of the script.  -----\n";
+

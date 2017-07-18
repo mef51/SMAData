@@ -1,0 +1,13 @@
+star    hms dms MM2   no 18:29:49.94  01:15:21.91 0.5 0.5
+star    hms dms MM3   no 18:29:49.93  01:15:23.17 0.5 0.5
+star hms dms SMC.1  no  18:29:09.101  00:31:31.09  1 1 0
+star hms dms SMC.6  no  18:29:49.792  01:15:20.37  0.5 0.5
+star hms dms SMC.6  no  18:29:49.690  01:15:21.20  0.5 0.5
+star hms dms SMC.7  no  18:28:54.061  00:29:29.44  1 1 0
+star hms dms SMC.8  no  18:29:48.099  01:16:43.47  1 1 0
+star hms dms SMC.8N no  18:29:48.75   01:16:56.0   2 2 0
+star hms dms SMC.11 no  18:29:06.627  00:30:34.06  1 1 0
+star hms dms SMC.15 no  18:29:54.304  00:36:00.85  1 1 0
+oellipse hms dms Ring no 18:29:49.830 01:15:19.70 1.0 0.8 120
+oellipse hms dms Ring no 18:29:49.870 01:15:19.43 1.4 1.0 120
+

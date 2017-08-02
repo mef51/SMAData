@@ -13,19 +13,19 @@ switch($1)
  breaksw
  case USB:
   # 65 110 200 280 300 400 580 600 620 640
-  set sb=usb;			set ch=vel,689,-1312.5,5.0,5.0
+  set sb=usb;			set ch=vel,345,-2149,5.0,5.0
   set freq=345.0;		set lab=cnt.usb
-set free=1,61,69,115,125,193,204,291,302,393,401,585,592,605,613,621,631,636,643,689
+  set free=1,23,33,85,95,104,108,140,150,166,180,216,228,268,305,322,329,345
  breaksw
 endsw
 
 set vis=UVDATA/$so
 \rm -fr tmp.* $vis.$lab
 echo $lab
-uvaver  vis=$vis'_'$sb.$lb out=tmp.1
+uvaver  vis=$vis'.'$sb out=tmp.1
 uvputhd vis=tmp.1  out=tmp.2  hdvar=restfreq varval=$freq
 uvredo  vis=tmp.2  out=tmp.3  options=velocity
-uvflag  vis=tmp.3  flagval=f edge=5,5
+uvflag  vis=tmp.3  flagval=f edge=5,5 # this is because we average 5 velocity channels into 1
 uvaver  vis=tmp.3 out=tmp.4 line=$ch
 uvlist  vis=tmp.3 options=spec
 uvlist  vis=tmp.4 options=spec
@@ -35,5 +35,5 @@ echo 'Return ';set rr=$<
 uvlin vis=tmp.3 out=$vis.$lab chans=$free mode=chan0 order=0
 #smauvplt vis=$vis.$lab device=2/xs interval=1e3 stokes=i,v \
 #          axis=time,pha nxy=2,2
-
+echo output $vis.$lab
 end:

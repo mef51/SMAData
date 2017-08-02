@@ -224,3 +224,7 @@ more crash course stuff:
 1 august 2017
 -------------
 * with uvspec you can use log=output.txt to dump the plotted data to a text file. if you specify multiple stokes=i,q,u,v it will just concatenate all the data
+
+2 august 2017
+-------------
+* i need to figure out how to make the cont.i.cc file. It's a model of the source. I think CLEAN makes it. But it isn't in Josep's script. He might've made it on the command line.

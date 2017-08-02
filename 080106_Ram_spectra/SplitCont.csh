@@ -1,7 +1,7 @@
 #! /bin/csh -f
 #
 #
-set so=irc+10216
+set so=orkl_080106
 set dd=UVDATA
 set lb=vis.uvcal
 switch($1)
@@ -33,7 +33,7 @@ smauvspec vis=tmp.4 device=1/xs interval=1e3 stokes=i \
           axis=ch,amp nxy=2,3
 echo 'Return ';set rr=$<
 uvlin vis=tmp.3 out=$vis.$lab chans=$free mode=chan0 order=0
-smauvplt vis=$vis.$lab device=2/xs interval=1e3 stokes=i,v \
-         axis=time,pha nxy=2,2
-echo 'output ' $vis.$lab
+#smauvplt vis=$vis.$lab device=2/xs interval=1e3 stokes=i,v \
+#          axis=time,pha nxy=2,2
+
 end:

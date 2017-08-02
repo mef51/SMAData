@@ -220,3 +220,7 @@ more crash course stuff:
 * I'm going to try to do this on the 141028_ngc7538/ dataset
 * It looks like there's a 10 step procedure laid out for reduction in 130824_SMC_Ram/Notes
 * And that's all for Hilo folks! Heading back tomorrow at noon.
+
+1 august 2017
+-------------
+* with uvspec you can use log=output.txt to dump the plotted data to a text file. if you specify multiple stokes=i,q,u,v it will just concatenate all the data

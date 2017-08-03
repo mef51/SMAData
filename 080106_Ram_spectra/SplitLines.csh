@@ -14,7 +14,7 @@ endsw
 
 set vis=UVDATA/$so
 \rm -fr tmp.* $vis.$lab
-echo $lab
+echo "Starting with:" $vis'.'$sb
 uvaver  vis=$vis'.'$sb out=tmp.1 select='win('$win')'
 uvputhd vis=tmp.1  out=tmp.2  hdvar=restfreq varval=$freq
 uvredo  vis=tmp.2  out=tmp.3  options=velocity
@@ -33,5 +33,6 @@ smauvspec vis=$vis.$lab device=1/xs interval=1e3 stokes=i \
           axis=ch,both nxy=2,2
 smauvspec vis=$vis.$lab device=1/xs interval=1e3 stokes=v \
           axis=ch,both nxy=2,2
-
+echo "Started with:" $vis'.'$sb
+echo "Output:" $vis.$lab
 end:

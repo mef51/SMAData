@@ -228,3 +228,8 @@ more crash course stuff:
 2 august 2017
 -------------
 * i need to figure out how to make the cont.i.cc file. It's a model of the source. I think CLEAN makes it. But it isn't in Josep's script. He might've made it on the command line.
+
+3 august 2017
+-------------
+* databases of lines galore http://www.labastro.eu/databases-.html
+* Josep uses IMSTAT to get his RMS... Its a lot lower than just looking at the plot

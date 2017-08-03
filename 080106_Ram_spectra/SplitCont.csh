@@ -21,7 +21,7 @@ endsw
 
 set vis=UVDATA/$so
 \rm -fr tmp.* $vis.$lab
-echo $lab
+echo "Starting with:" $vis'.'$sb
 uvaver  vis=$vis'.'$sb out=tmp.1
 uvputhd vis=tmp.1  out=tmp.2  hdvar=restfreq varval=$freq
 uvredo  vis=tmp.2  out=tmp.3  options=velocity
@@ -29,11 +29,12 @@ uvflag  vis=tmp.3  flagval=f edge=5,5 # this is because we average 5 velocity ch
 uvaver  vis=tmp.3 out=tmp.4 line=$ch
 uvlist  vis=tmp.3 options=spec
 uvlist  vis=tmp.4 options=spec
-smauvspec vis=tmp.4 device=1/xs interval=1e3 stokes=i \
+smauvspec vis=tmp.4 device=1/xw interval=1e3 stokes=i \
           axis=ch,amp nxy=2,3
 echo 'Return ';set rr=$<
 uvlin vis=tmp.3 out=$vis.$lab chans=$free mode=chan0 order=0
 #smauvplt vis=$vis.$lab device=2/xs interval=1e3 stokes=i,v \
 #          axis=time,pha nxy=2,2
-echo output $vis.$lab
+echo "Started with:" $vis'.'$sb
+echo "Output:" $vis.$lab
 end:

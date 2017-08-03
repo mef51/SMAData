@@ -11,7 +11,7 @@ goto $1
 SPLIT:
 # Split in different files LL and RR
 foreach stk(ll rr lr rl)
- foreach lin(cs7-6 sis19-18 h13cn4-3 co3-2 cnt.usb cnt.lsb)
+ foreach lin(co3-2 cnt.usb)
   \rm -fr $uvc/$so.$lin.$stk
   uvaver vis=$uvo/$so.$lin out=$uvc/$so.$lin.$stk select='pol('$stk')'
  end
@@ -29,7 +29,7 @@ SELFCAL:
 # 6. Resort data
 tall=0.01
 foreach stk(ll rr)
- foreach sb(cnt.lsb cnt.usb)
+ foreach sb(cnt.usb)
   selfcal vis=$uvc/$so.$sb.$stk  model=MAPS/$so.cont.i.cc \
     refant=6 interval=8 options=phase
   gpplt vis=$uvc/$so.$sb.$stk device=1/xs yaxis=phase nxy=1,3
@@ -38,13 +38,13 @@ foreach stk(ll rr)
   uvaver vis=$uvc/$so.$sb.$stk out=$uvc/$so.$sb.$stk.slfc
  end
 #
- foreach lin(cs7-6 sis19-18 h13cn4-3 co3-2)
+ foreach lin(co3-2)
   \rm -fr $uvc/$so.$lin.$stk.slfc
   gpcopy vis=$uvc/$so.cnt.usb.$stk out=$uvc/$so.$lin.$stk
   uvaver vis=$uvc/$so.$lin.$stk out=$uvc/$so.$lin.$stk.slfc
  end
 end
-foreach lin(cs7-6 sis19-18 h13cn4-3 co3-2 cnt.usb cnt.lsb)
+foreach lin(co3-2 cnt.usb)
  set vis=$uvc/$so.$lin
  \rm -rf tmp.5 tmp.6 $uvc/$so.$lin.corrected.slfc
  uvcat vis=$vis.rr.slfc,$vis.ll.slfc,$vis.rl,$vis.lr out=tmp.5
@@ -64,7 +64,7 @@ MAP:
 set src=$map/$so.cnt
 set rms=0.0065;set tall=0.03
 \rm -fr $src.*
-invert vis=$uvc/$so.cnt.lsb.corrected.slfc,$uvc/$so.cnt.usb.corrected.slfc \
+invert vis=$uvc/$so.cnt.usb.corrected.slfc \
    stokes=i,v beam=$src.bm map=$src.i.mp,$src.v.mp \
    imsize=128 cell=0.3 options=systemp,double,mfs  sup=0
 foreach stk(i v)
@@ -73,7 +73,7 @@ foreach stk(i v)
   restor map=$src.$stk.mp beam=$src.bm model=$src.$stk.cc out=$src.$stk.cm
 end
 set src=$map/$so.cnt.uncorrected
-invert vis=$uvo/$so.cnt.lsb,$uvo/$so.cnt.usb \
+invert vis=$uvo/$so.cnt.usb \
    stokes=i,v beam=$src.bm map=$src.i.mp,$src.v.mp \
    imsize=128 cell=0.3 options=systemp,double,mfs  sup=0
 foreach stk(i v)
@@ -85,7 +85,7 @@ end
 # 2. Map corrected line data
 set rms=0.13; set tall=0.50
 set vel=vel,8,-40,4,4
-foreach lin(cs7-6 sis19-18 h13cn4-3 co3-2)
+foreach lin(co3-2)
  set src=$map/$so.$lin
  \rm -fr $src.*
  invert vis=$uvc/$so.$lin.corrected.slfc \
@@ -100,7 +100,7 @@ end
 # 3. Map uncorrected line data with same paramenters as in 2
 set rms=0.13; set tall=0.50
 set vel=vel,8,-40,4,4
-foreach lin(cs7-6 sis19-18 h13cn4-3 co3-2)
+foreach lin(co3-2)
  set src=$map/$so.$lin.uncorrected
  \rm -fr $src.*
  invert vis=$uvo/$so.$lin \
@@ -119,7 +119,7 @@ foreach stk(ll rr)
  \rm -rf $src.*
  foreach pol(nopol nocal)
   \rm -rf $src.bm
-  invert vis=$uvc/$so.cnt.lsb.$stk,$uvc/$so.cnt.usb.$stk \
+  invert vis=$uvc/$so.cnt.usb.$stk \
     beam=$src.bm map=$src.$pol.mp \
     imsize=128 cell=0.3 options=systemp,double,mfs,$pol  sup=0
   clean  map=$src.$pol.mp beam=$src.bm out=$src.$pol.cc \
@@ -133,7 +133,7 @@ end
 DISP:
 # 1. Plot uncorrected channel map
 # 2. Plot corrected channel map
-foreach lin(cnt cs7-6 sis19-18 h13cn4-3 co3-2)
+foreach lin(cnt co3-2)
  set src=$map/$so.$lin
  \rm -rf $src.v-i.perc $src.v-i.perc.uncorrected
  if ($lin == 'cnt') then

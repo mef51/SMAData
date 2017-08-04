@@ -138,7 +138,7 @@ foreach lin(cnt co3-2)
  set src=$map/$so.$lin
  \rm -rf $src.v-i.perc $src.v-i.perc.uncorrected
  if ($lin == 'cnt') then
-  set rms=0.0098;set nxy=1,1
+  set rms=0.02;set nxy=1,1
   maths exp='100*<'$src.v.cm'>/<'$src.i.cm'>' \
       mask='<'$src.i.cm'>.gt.0.4' \
       out=$src.v-i.perc
@@ -146,7 +146,7 @@ foreach lin(cnt co3-2)
       mask='<'$src.uncorrected.i.cm'>.gt.0.4' \
       out=$src.v-i.perc.uncorrected
  else
-  set rms=0.2;set nxy=4,2
+  set rms=0.3;set nxy=4,2
   maths exp='100*<'$src.v.cm'>/<'$src.i.cm'>' \
       mask='<'$src.i.cm'>.gt.6' \
       out=$src.v-i.perc
@@ -175,7 +175,7 @@ foreach lin(cnt co3-2)
  imstat in=$src.v.cm region='box(3,3,50,125)'
  echo "Press Return to continue"; set nn=$<
  cgdisp type=cont,cont labtyp=arcsec,arcsec \
-       device=$filename.uncorr.perc.ps/ps options=full,beambl,3val \
+       device=$filename.uncorr.perc.ps/cps options=full,beambl,3val \
        in=$src.uncorrected.i.cm,$src.v-i.perc.uncorrected cols1=2 cols1=8 \
        slev=p,1,a,1 \
        levs1=15,35,55,75,95 \
@@ -183,7 +183,7 @@ foreach lin(cnt co3-2)
        region='arcsec,box(-5.5,-6,6.5,6)' nxy=$nxy
  echo "Press Return to continue"; set nn=$<
  cgdisp type=cont,cont labtyp=arcsec,arcsec \
-       device=$filename.corr.perc.ps/ps options=full,beambl,3val \
+       device=$filename.corr.perc.ps/cps options=full,beambl,3val \
        in=$src.i.cm,$src.v-i.perc cols1=2 cols1=8 \
        slev=p,1,a,1 \
        levs1=15,35,55,75,95 \

@@ -1,31 +1,13 @@
 #! /bin/csh -f
 #
 #
-set so=irc+10216
+set so=orkl_080106
 set dd=UVDATA
-set line=vel,18,-43,2,2
+set line=vel,87,-31,1,1
 set rms=0.3
 switch($1)
-# RMS I, Q, U, V = 0.13 
- case CS:
-  set freq=342.88285;		set lab=cs7-6
-  set reg='arcsec,box(-4,-4,4,4)'; set rms=0.13
-  set rng=0,10
- breaksw
- case SiS:
-# RMS I, Q, U, V = 0.13 
-  set freq=344.77947;		set lab=sis19-18
-  set reg='arcsec,box(-4,-4,4,4)'; set rms=0.13
-  set rng=0,10
- breaksw
- case H13CN:  # 2 win
-# RMS I, Q, U, V = 0.14 
-  set freq=345.33976 ;		set lab=h13cn4-3
-  set reg='arcsec,box(-4,-4,4,4)'; set rms=0.14
- set rng=0,12
- breaksw
  case CO:
-# RMS I, Q, U, V = 0.14 
+# RMS I, Q, U, V = 0.14
   set freq=345.7959;		set lab=co3-2
   set reg='arcsec,box(-4,-4,4,4)'; set rms=0.14
  set rng=0,30
@@ -34,7 +16,7 @@ endsw
 
 set vis=UVDATA/$so.$lab
 set src=MAPS/$so.$lab
-set tall=`echo $rms | awk '{print $1 * 3.0}'` 
+set tall=`echo $rms | awk '{print $1 * 3.0}'`
 goto $2
 
 MAPS:
@@ -42,10 +24,10 @@ MAPS:
 invert vis=$vis line=$line \
     beam=$src.bm map=$src.i.mp,$src.q.mp,$src.u.mp,$src.v.mp \
     imsize=128 cell=0.3 options=systemp,double stokes=i,q,u,v sup=0
-foreach stk(i q u v) 
+foreach stk(i q u v)
 clean  map=$src.$stk.mp beam=$src.bm out=$src.$stk.cc \
        niters=1000 cutoff=$tall
-restor map=$src.$stk.mp beam=$src.bm model=$src.$stk.cc out=$src.$stk.cm 
+restor map=$src.$stk.mp beam=$src.bm model=$src.$stk.cc out=$src.$stk.cm
 end
 
 imstat in=$src.i.cm region='box(6,6,50,122)'
@@ -77,3 +59,4 @@ cgdisp type=cont,pixel labtyp=arcsec,arcsec \
        slev=a,1,p,1 levs1=-8,-6,-4,-2,2,4,6,8 \
        region='arcsec,box(-5.5,-6,6.5,6)' nxy=6,3
 
+end:

@@ -3,7 +3,7 @@
 #
 set so=orkl_080106
 set uvo=UVDATA
-set uvc=UVOffsetCORRECT
+set uvc=UVOffsetCorrect
 set map=MAPSCorrect
 set rms=0.0065
 goto $1
@@ -30,7 +30,7 @@ SELFCAL:
 tall=0.01
 foreach stk(ll rr)
  foreach sb(cnt.usb)
-  selfcal vis=$uvc/$so.$sb.$stk  model=MAPS/$so.cont.i.cc \
+  selfcal vis=$uvc/$so.$sb.$stk  model=MAPS/$so.cont.usb.i.cc \
     refant=6 interval=8 options=phase
   gpplt vis=$uvc/$so.$sb.$stk device=1/xs yaxis=phase nxy=1,3
   echo -n "Press enter to continue   ";set rs=$<
@@ -128,12 +128,13 @@ foreach stk(ll rr)
  end
 end
 goto end
-end
 
 DISP:
 # 1. Plot uncorrected channel map
 # 2. Plot corrected channel map
 foreach lin(cnt co3-2)
+ set devicetype=ps/cps
+ set filename=$lin
  set src=$map/$so.$lin
  \rm -rf $src.v-i.perc $src.v-i.perc.uncorrected
  if ($lin == 'cnt') then
@@ -154,7 +155,7 @@ foreach lin(cnt co3-2)
       out=$src.v-i.perc.uncorrected
  endif
  cgdisp type=cont,cont labtyp=arcsec,arcsec \
-       device=/xs options=full,beambl,3val csize=0,1,0,0 \
+       device=$filename.uncorr.$devicetype options=full,beambl,3val csize=0,1,0,0 \
        in=$src.uncorrected.i.cm,$src.uncorrected.v.cm cols1=2 cols2=8 \
        slev=p,1,a,$rms \
        levs1=15,35,55,75,95 \
@@ -164,7 +165,7 @@ foreach lin(cnt co3-2)
  imstat in=$src.v.cm region='box(3,3,50,125)'
  echo "Press Return to continue"; set nn=$<
  cgdisp type=cont,cont labtyp=arcsec,arcsec \
-       device=/xs options=full,beambl,3val csize=0,1,0,0 \
+       device=$filename.corr.$devicetype options=full,beambl,3val csize=0,1,0,0 \
        in=$src.i.cm,$src.v.cm cols1=2 cols2=8 \
        slev=p,1,a,$rms \
        levs1=15,35,55,75,95 \
@@ -174,7 +175,7 @@ foreach lin(cnt co3-2)
  imstat in=$src.v.cm region='box(3,3,50,125)'
  echo "Press Return to continue"; set nn=$<
  cgdisp type=cont,cont labtyp=arcsec,arcsec \
-       device=/xs options=full,beambl,3val \
+       device=$filename.uncorr.perc.ps/ps options=full,beambl,3val \
        in=$src.uncorrected.i.cm,$src.v-i.perc.uncorrected cols1=2 cols1=8 \
        slev=p,1,a,1 \
        levs1=15,35,55,75,95 \
@@ -182,7 +183,7 @@ foreach lin(cnt co3-2)
        region='arcsec,box(-5.5,-6,6.5,6)' nxy=$nxy
  echo "Press Return to continue"; set nn=$<
  cgdisp type=cont,cont labtyp=arcsec,arcsec \
-       device=/xs options=full,beambl,3val \
+       device=$filename.corr.perc.ps/ps options=full,beambl,3val \
        in=$src.i.cm,$src.v-i.perc cols1=2 cols1=8 \
        slev=p,1,a,1 \
        levs1=15,35,55,75,95 \

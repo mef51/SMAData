@@ -233,3 +233,7 @@ more crash course stuff:
 -------------
 * databases of lines galore http://www.labastro.eu/databases-.html
 * Josep uses IMSTAT to get his RMS... Its a lot lower than just looking at the plot
+* The mapping of the continuum works, and so does the offset correction! You can clearly see the squint being reduced
+after all this processing.
+* The CO maps on the other hand aren't working. Invert is rejecting all the visibilities (it's flagging them as bad) for some reason. I want to try the following:
+	* Redo split lines to select just one strongly peaked CO line. Right now I have all the dips and valleys. I'll pick the one CO line that has a Stokes V signal. Maybe that will work. I looked at the fortran code for invert and I found a block of code that checks the visibility against a 'weight' or a 'weight spectrum'. Whatever that is.

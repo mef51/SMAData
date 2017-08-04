@@ -10,7 +10,7 @@ switch($1)
 # RMS I, Q, U, V = 0.13
   set vis=UVDATA/$so.cnt.usb
   set lab=cont.usb
-  set reg='arcsec,box(-4,-4,4,4)'; set rms=0.009
+  set reg='arcsec,box(-19,-19,19,19)'; set rms=0.009
  breaksw
 endsw
 
@@ -36,7 +36,7 @@ foreach stk(q u v)
        device=/xs options=full,beambl,3val csize=0,1,0,0 \
        in=$src.$stk.cm,$src.i.cm range=$rng,lin,1 cols1=2 \
        slev=a,$rms levs1=-20,-16,-13,-10,-7,-5,-3,3,5,7,10,13,16,20 \
-       region='arcsec,box(-10,-10,10,10)'
+       region=$reg
  imstat in=$src.$stk.cm region='box(6,6,50,122)'
  echo "Press Return to continue"; set nn=$<
 end

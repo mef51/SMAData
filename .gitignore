@@ -52,6 +52,12 @@ all-tsys
 *.cc
 *.perc
 *.cal
+*.ll
+*.rr
+*.lr
+*.rl
+*.slfc
+*.uncorrected
 baseline_corrected
 
 # Josep Miquel things

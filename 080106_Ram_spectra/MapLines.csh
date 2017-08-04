@@ -3,7 +3,8 @@
 #
 set so=orkl_080106
 set dd=UVDATA
-set line=vel,87,-31,1,1
+# set line=vel,87,-31,1,1
+set line=vel,43,-31,2,2
 set rms=0.3
 switch($1)
  case CO:

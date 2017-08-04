@@ -84,7 +84,7 @@ end
 
 # 2. Map corrected line data
 set rms=0.13; set tall=0.50
-set vel=vel,8,-40,4,4
+set vel=vel,43,-31,2,2
 foreach lin(co3-2)
  set src=$map/$so.$lin
  \rm -fr $src.*
@@ -98,8 +98,8 @@ foreach lin(co3-2)
  end
 end
 # 3. Map uncorrected line data with same paramenters as in 2
-set rms=0.13; set tall=0.50
-set vel=vel,8,-40,4,4
+# set rms=0.13; set tall=0.50
+# set vel=vel,43,-31,2,2
 foreach lin(co3-2)
  set src=$map/$so.$lin.uncorrected
  \rm -fr $src.*

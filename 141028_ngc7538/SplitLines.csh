@@ -1,19 +1,14 @@
 #! /bin/csh -f
 #
 #
-set so=orkl_080106
+set so=ngc7538
 set dd=UVDATA
 set lb=vis.uvcal
 switch($1)
  case CO:
-  set win='4'; 		set sb=usb;
+  set win='3'; 		set sb=usb;
   set freq=345.7959;		set lab=co3-2
   set free=1,19,48,53,69,74,93,102
- breaksw
- case SiO:
-  set win='23';    set sb=usb;
-  set freq=347.3306;    set lab=sio8-7
-  set free=74,124
  breaksw
 endsw
 

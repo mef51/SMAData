@@ -1,16 +1,10 @@
 #! /bin/csh -f
 #
 #
-set so=orkl_080106
+set so=NGC7538
 set dd=UVDATA
 set lb=vis.uvcal
 switch($1)
- case LSB:
-  # 190 340 610 700
-  set sb=lsb;			set ch=vel,717,-2632,5.0,5.0
-  set freq=331.6;		set lab=cnt.lsb
-  set free=1,194,203,346,355,648,659,700,709,717
- breaksw
  case USB:
   # 65 110 200 280 300 400 580 600 620 640
   set sb=usb;			set ch=vel,345,-2149,5.0,5.0
@@ -20,9 +14,10 @@ switch($1)
 endsw
 
 set vis=UVDATA/$so
+set suffix='S-s3'
 \rm -fr tmp.* $vis.$lab
-echo "Starting with:" $vis'.'$sb
-uvaver  vis=$vis'.'$sb out=tmp.1
+echo "Starting with:" $vis$suffix'.'$sb
+uvaver  vis=$vis$suffix'.'$sb out=tmp.1
 uvputhd vis=tmp.1  out=tmp.2  hdvar=restfreq varval=$freq
 uvredo  vis=tmp.2  out=tmp.3  options=velocity
 uvflag  vis=tmp.3  flagval=f edge=5,5 # this is because we average 5 velocity channels into 1

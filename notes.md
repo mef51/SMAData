@@ -237,3 +237,8 @@ more crash course stuff:
 after all this processing.
 * The CO maps on the other hand aren't working. Invert is rejecting all the visibilities (it's flagging them as bad) for some reason. I want to try the following:
 	* Redo split lines to select just one strongly peaked CO line. Right now I have all the dips and valleys. I'll pick the one CO line that has a Stokes V signal. Maybe that will work. I looked at the fortran code for invert and I found a block of code that checks the visibility against a 'weight' or a 'weight spectrum'. Whatever that is.
+
+4 august 2017
+--------------
+* What does correcting for squint do to a true signal?
+* the Orion signal was never more than 3 sigma

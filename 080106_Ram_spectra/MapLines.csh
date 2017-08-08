@@ -8,9 +8,14 @@ set line=vel,43,-31,2,2
 set rms=0.3
 switch($1)
  case CO:
-# RMS I, Q, U, V = 0.14
   set freq=345.7959;		set lab=co3-2
-  set reg='arcsec,box(-4,-4,4,4)'; set rms=0.14
+  set reg='arcsec,box(-4,-4,4,4)'; set rms=0.2
+ set rng=0,30
+ breaksw
+ case SiO:
+  set line=vel,27,-20,2,2
+  set freq=347.3306;    set lab=sio8-7
+  set reg='arcsec,box(-4,-4,4,4)'; set rms=0.3
  set rng=0,30
  breaksw
 endsw

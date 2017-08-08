@@ -11,7 +11,7 @@ goto $1
 SPLIT:
 # Split in different files LL and RR
 foreach stk(ll rr lr rl)
- foreach lin(co3-2 cnt.usb)
+ foreach lin(co3-2 sio8-7 cnt.usb)
   \rm -fr $uvc/$so.$lin.$stk
   uvaver vis=$uvo/$so.$lin out=$uvc/$so.$lin.$stk select='pol('$stk')'
  end
@@ -38,13 +38,13 @@ foreach stk(ll rr)
   uvaver vis=$uvc/$so.$sb.$stk out=$uvc/$so.$sb.$stk.slfc
  end
 #
- foreach lin(co3-2)
+ foreach lin(co3-2 sio8-7)
   \rm -fr $uvc/$so.$lin.$stk.slfc
   gpcopy vis=$uvc/$so.cnt.usb.$stk out=$uvc/$so.$lin.$stk
   uvaver vis=$uvc/$so.$lin.$stk out=$uvc/$so.$lin.$stk.slfc
  end
 end
-foreach lin(co3-2 cnt.usb)
+foreach lin(co3-2 sio8-7 cnt.usb)
  set vis=$uvc/$so.$lin
  \rm -rf tmp.5 tmp.6 $uvc/$so.$lin.corrected.slfc
  uvcat vis=$vis.rr.slfc,$vis.ll.slfc,$vis.rl,$vis.lr out=tmp.5
@@ -85,8 +85,10 @@ end
 # 2. Map corrected line data
 set rms=0.13; set tall=0.50
 set vel=vel,43,-31,2,2
-foreach lin(co3-2)
+foreach lin(co3-2 sio8-7)
  set src=$map/$so.$lin
+ if($lin == co3-2) set vel=vel,43,-31,2,2
+ if($lin == sio8-7) set vel=vel,27,-20,2,2
  \rm -fr $src.*
  invert vis=$uvc/$so.$lin.corrected.slfc \
     stokes=i,v beam=$src.bm map=$src.i.mp,$src.v.mp \
@@ -99,8 +101,9 @@ foreach lin(co3-2)
 end
 # 3. Map uncorrected line data with same paramenters as in 2
 # set rms=0.13; set tall=0.50
-# set vel=vel,43,-31,2,2
-foreach lin(co3-2)
+foreach lin(co3-2 sio8-7)
+ if($lin == co3-2) set vel=vel,43,-31,2,2
+ if($lin == sio8-7) set vel=vel,27,-20,2,2
  set src=$map/$so.$lin.uncorrected
  \rm -fr $src.*
  invert vis=$uvo/$so.$lin \
@@ -132,13 +135,13 @@ goto end
 DISP:
 # 1. Plot uncorrected channel map
 # 2. Plot corrected channel map
-foreach lin(cnt co3-2)
+foreach lin(cnt co3-2 sio8-7)
  set devicetype=ps/cps
  set filename=$lin
  set src=$map/$so.$lin
  \rm -rf $src.v-i.perc $src.v-i.perc.uncorrected
  if ($lin == 'cnt') then
-  set rms=0.02;set nxy=1,1
+  set rms=0.03;set nxy=1,1
   maths exp='100*<'$src.v.cm'>/<'$src.i.cm'>' \
       mask='<'$src.i.cm'>.gt.0.4' \
       out=$src.v-i.perc
@@ -146,7 +149,9 @@ foreach lin(cnt co3-2)
       mask='<'$src.uncorrected.i.cm'>.gt.0.4' \
       out=$src.v-i.perc.uncorrected
  else
-  set rms=0.3;set nxy=4,2
+  if($lin == sio8-7) set rms=0.23
+  if($lin == co3-2) set rms=0.29
+  set nxy=4,2
   maths exp='100*<'$src.v.cm'>/<'$src.i.cm'>' \
       mask='<'$src.i.cm'>.gt.6' \
       out=$src.v-i.perc

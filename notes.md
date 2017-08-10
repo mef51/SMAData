@@ -241,4 +241,15 @@ after all this processing.
 4 august 2017
 --------------
 * What does correcting for squint do to a true signal?
+	* it preserves it: https://www.desmos.com/calculator/orhpp2fsr6
 * the Orion signal was never more than 3 sigma
+
+10 august 2017
+---------------
+* Talked with Martin:
+	* smoothing dramatically (combining ten channels into one) is a way to increase the SNR
+	* make a single map of CO instead of having panels over different km/s
+	* SMA just sent out a call for proposals Deadline September 6
+	* Arizona has a 12m dish at Kitt Peak, they're also taking proposals until September 17
+		* need to see what their capabilities are, if they can do circular polarization or not
+* averaging != integrating. Averaging the images isn't adding up all the images

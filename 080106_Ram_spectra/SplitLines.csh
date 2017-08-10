@@ -24,12 +24,6 @@ uvaver  vis=$vis'.'$sb out=tmp.1 select='win('$win')'
 uvputhd vis=tmp.1  out=tmp.2  hdvar=restfreq varval=$freq
 uvredo  vis=tmp.2  out=tmp.3  options=velocity
 uvlist  vis=tmp.3 options=spec
-if ($1 == 'H13CN') then
- uvflag  vis=tmp.3  flagval=f edge=5,5
- uvaver  vis=tmp.3 out=tmp.4 line=$ch
- \rm -r tmp.3
- mv tmp.4 tmp.3
-endif
 smauvspec vis=tmp.3 device=1/xs interval=1e3 stokes=i \
           axis=chan,amp nxy=2,3
 echo 'Return ';set rr=$<

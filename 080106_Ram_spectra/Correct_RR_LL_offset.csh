@@ -11,10 +11,12 @@ goto $1
 SPLIT:
 # Split in different files LL and RR
 foreach stk(ll rr lr rl)
- foreach lin(co3-2 sio8-7 cnt.usb)
-  \rm -fr $uvc/$so.$lin.$stk
-  uvaver vis=$uvo/$so.$lin out=$uvc/$so.$lin.$stk select='pol('$stk')'
- end
+	foreach lin(co3-2 sio8-7 cnt.usb)
+		\rm -fr $uvc/$so.$lin.$stk
+		uvaver vis=$uvo/$so.$lin out=$uvc/$so.$lin.$stk select='pol('$stk')'
+	end
+	\rm -fr $uvc/$so.usb.$stk
+	uvaver vis=$uvo/$so.usb out=$uvc/$so.usb.$stk stokes=$stk
 end
 goto end
 
@@ -29,27 +31,26 @@ SELFCAL:
 # 6. Resort data
 tall=0.01
 foreach stk(ll rr)
- foreach sb(cnt.usb)
-  selfcal vis=$uvc/$so.$sb.$stk  model=MAPS/$so.cont.usb.i.cc \
-    refant=6 interval=8 options=phase
-  gpplt vis=$uvc/$so.$sb.$stk device=1/xs yaxis=phase nxy=1,3
-  echo -n "Press enter to continue   ";set rs=$<
-  \rm -rf $uvc/$so.$sb.$stk.slfc
-  uvaver vis=$uvc/$so.$sb.$stk out=$uvc/$so.$sb.$stk.slfc
- end
-#
- foreach lin(co3-2 sio8-7)
-  \rm -fr $uvc/$so.$lin.$stk.slfc
-  gpcopy vis=$uvc/$so.cnt.usb.$stk out=$uvc/$so.$lin.$stk
-  uvaver vis=$uvc/$so.$lin.$stk out=$uvc/$so.$lin.$stk.slfc
- end
+	foreach sb(cnt.usb)
+		selfcal vis=$uvc/$so.$sb.$stk  model=MAPS/$so.cont.usb.i.cc \
+			refant=6 interval=8 options=phase
+		gpplt vis=$uvc/$so.$sb.$stk device=1/xs yaxis=phase nxy=1,3
+		echo -n "Press enter to continue   ";set rs=$<
+		\rm -rf $uvc/$so.$sb.$stk.slfc
+		uvaver vis=$uvc/$so.$sb.$stk out=$uvc/$so.$sb.$stk.slfc
+	end
+	foreach lin(co3-2 sio8-7 usb)
+		\rm -fr $uvc/$so.$lin.$stk.slfc
+		gpcopy vis=$uvc/$so.cnt.usb.$stk out=$uvc/$so.$lin.$stk
+		uvaver vis=$uvc/$so.$lin.$stk out=$uvc/$so.$lin.$stk.slfc
+	end
 end
-foreach lin(co3-2 sio8-7 cnt.usb)
- set vis=$uvc/$so.$lin
- \rm -rf tmp.5 tmp.6 $uvc/$so.$lin.corrected.slfc
- uvcat vis=$vis.rr.slfc,$vis.ll.slfc,$vis.rl,$vis.lr out=tmp.5
- uvsort vis=tmp.5 out=tmp.6
- uvaver vis=tmp.6 out=$uvc/$so.$lin.corrected.slfc interval=5
+foreach lin(co3-2 sio8-7 cnt.usb usb)
+	set vis=$uvc/$so.$lin
+	\rm -rf tmp.5 tmp.6 $uvc/$so.$lin.corrected.slfc
+	uvcat vis=$vis.rr.slfc,$vis.ll.slfc,$vis.rl,$vis.lr out=tmp.5
+	uvsort vis=tmp.5 out=tmp.6
+	uvaver vis=tmp.6 out=$uvc/$so.$lin.corrected.slfc interval=5
 end
 goto end
 
@@ -92,7 +93,7 @@ foreach lin(co3-2 sio8-7)
  \rm -fr $src.*
  invert vis=$uvc/$so.$lin.corrected.slfc \
     stokes=i,v beam=$src.bm map=$src.i.mp,$src.v.mp \
-    imsize=128 cell=0.3 options=systemp,double sup=0 line=$vel
+    imsize=128 cell=0.3 options=systemp,double,mfs sup=0 #line=$vel
  foreach stk(i v)
    clean  map=$src.$stk.mp beam=$src.bm out=$src.$stk.cc \
        niters=3000 cutoff=$tall
@@ -108,7 +109,7 @@ foreach lin(co3-2 sio8-7)
  \rm -fr $src.*
  invert vis=$uvo/$so.$lin \
     stokes=i,v beam=$src.bm map=$src.i.mp,$src.v.mp \
-    imsize=128 cell=0.3 options=systemp,double sup=0 line=$vel
+    imsize=128 cell=0.3 options=systemp,double,mfs sup=0 #line=$vel
  foreach stk(i v)
    clean  map=$src.$stk.mp beam=$src.bm out=$src.$stk.cc \
        niters=3000 cutoff=$tall
@@ -149,9 +150,9 @@ foreach lin(cnt co3-2 sio8-7)
       mask='<'$src.uncorrected.i.cm'>.gt.0.4' \
       out=$src.v-i.perc.uncorrected
  else
-  if($lin == sio8-7) set rms=0.23
-  if($lin == co3-2) set rms=0.29
-  set nxy=4,2
+  if($lin == sio8-7) set rms=0.06
+  if($lin == co3-2) set rms=0.13
+  set nxy=1,1
   maths exp='100*<'$src.v.cm'>/<'$src.i.cm'>' \
       mask='<'$src.i.cm'>.gt.6' \
       out=$src.v-i.perc
@@ -165,7 +166,8 @@ foreach lin(cnt co3-2 sio8-7)
        slev=p,1,a,$rms \
        levs1=15,35,55,75,95 \
        levs2=-8,-7,-6,-5,-4,-3,-2,2,3,4,5,6,7,8 \
-       region='arcsec,box(-15,-15,15,15)' nxy=$nxy
+       nxy=$nxy \
+       # region='arcsec,box(-15,-15,15,15)'
  imstat in=$src.i.cm region='box(3,3,50,125)'
  imstat in=$src.v.cm region='box(3,3,50,125)'
  echo "Press Return to continue"; set nn=$<
@@ -175,7 +177,8 @@ foreach lin(cnt co3-2 sio8-7)
        slev=p,1,a,$rms \
        levs1=15,35,55,75,95 \
        levs2=-8,-7,-6,-5,-4,-3,-2,2,3,4,5,6,7,8 \
-       region='arcsec,box(-15,-15,15,15)' nxy=$nxy
+       nxy=$nxy \
+       # region='arcsec,box(-15,-15,15,15)'
  imstat in=$src.i.cm region='box(3,3,50,125)'
  imstat in=$src.v.cm region='box(3,3,50,125)'
  echo "Press Return to continue"; set nn=$<
@@ -185,7 +188,8 @@ foreach lin(cnt co3-2 sio8-7)
        slev=p,1,a,1 \
        levs1=15,35,55,75,95 \
        levs2=-6,-5,-4,-3,-2,-1,1,2,3,4,5,6 \
-       region='arcsec,box(-5.5,-6,6.5,6)' nxy=$nxy
+       nxy=$nxy \
+       # region='arcsec,box(-5.5,-6,6.5,6)'
  echo "Press Return to continue"; set nn=$<
  cgdisp type=cont,cont labtyp=arcsec,arcsec \
        device=$filename.corr.perc.ps/cps options=full,beambl,3val \
@@ -193,7 +197,8 @@ foreach lin(cnt co3-2 sio8-7)
        slev=p,1,a,1 \
        levs1=15,35,55,75,95 \
        levs2=-6,-5,-4,-3,-2,-1,1,2,3,4,5,6 \
-       region='arcsec,box(-5.5,-6,6.5,6)' nxy=$nxy
+       nxy=$nxy \
+       # region='arcsec,box(-5.5,-6,6.5,6)'
  echo "Press Return to continue"; set nn=$<
 end
 goto end

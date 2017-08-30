@@ -253,3 +253,7 @@ after all this processing.
 	* Arizona has a 12m dish at Kitt Peak, they're also taking proposals until September 17
 		* need to see what their capabilities are, if they can do circular polarization or not
 * averaging != integrating. Averaging the images isn't adding up all the images
+
+25 august 2017
+--------------
+* orionCPARS

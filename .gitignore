@@ -5,7 +5,9 @@
 *.DS_Store
 *.fits
 *.dat
-*.pdf
+SMA2012_Serpens/*.pdf
+SMA2012_Serpens/Biblio/*.pdf
+results/orionkl/*.pdf
 compressed/
 
 

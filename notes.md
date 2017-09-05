@@ -257,3 +257,7 @@ after all this processing.
 25 august 2017
 --------------
 * orionCPARS
+
+5 sept 2017
+-----------
+* 5sigma in co IRC+10216 when channels are averaged!

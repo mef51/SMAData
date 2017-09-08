@@ -15,13 +15,17 @@ foreach stk(ll rr lr rl)
   \rm -fr $uvc/$so.$lin.$stk
   uvaver vis=$uvo/$so.$lin out=$uvc/$so.$lin.$stk select='pol('$stk')'
  end
+ \rm -fr $uvc/$so.usb.$stk
+ \rm -fr $uvc/$so.lsb.$stk
+ uvaver vis=$uvo/$so'_usb'.vis.uvcal out=$uvc/$so.usb.$stk stokes=$stk
+ uvaver vis=$uvo/$so'_lsb'.vis.uvcal out=$uvc/$so.lsb.$stk stokes=$stk
 end
 goto end
 
 SELFCAL:
 # Original map used for selfcal in MAPS
 # Independent step for RR and LL (u,v) files
-# 1. Selcalibration of continuum 
+# 1. Selcalibration of continuum
 # 2. Applying selfcalibration  for continuum
 # 3. Copyinggains to Line data (all in the USB)
 # 4. Applying selfcalibration  for lines
@@ -38,17 +42,20 @@ foreach stk(ll rr)
   uvaver vis=$uvc/$so.$sb.$stk out=$uvc/$so.$sb.$stk.slfc
  end
 #
- foreach lin(cs7-6 sis19-18 h13cn4-3 co3-2)
+ foreach lin(cs7-6 sis19-18 h13cn4-3 co3-2 usb)
   \rm -fr $uvc/$so.$lin.$stk.slfc
   gpcopy vis=$uvc/$so.cnt.usb.$stk out=$uvc/$so.$lin.$stk
-  uvaver vis=$uvc/$so.$lin.$stk out=$uvc/$so.$lin.$stk.slfc 
+  uvaver vis=$uvc/$so.$lin.$stk out=$uvc/$so.$lin.$stk.slfc
  end
+ \rm -fr $uvc/$so.lsb.$stk.slfc
+ gpcopy vis=$uvc/$so.cnt.usb.$stk out=$uvc/$so.lsb.$stk
+ uvaver vis=$uvc/$so.lsb.$stk out=$uvc/$so.lsb.$stk.slfc
 end
-foreach lin(cs7-6 sis19-18 h13cn4-3 co3-2 cnt.usb cnt.lsb)
+foreach lin(cs7-6 sis19-18 h13cn4-3 co3-2 cnt.usb cnt.lsb usb lsb)
  set vis=$uvc/$so.$lin
  \rm -rf tmp.5 tmp.6 $uvc/$so.$lin.corrected.slfc
  uvcat vis=$vis.rr.slfc,$vis.ll.slfc,$vis.rl,$vis.lr out=tmp.5
- uvsort vis=tmp.5 out=tmp.6 
+ uvsort vis=tmp.5 out=tmp.6
  uvaver vis=tmp.6 out=$uvc/$so.$lin.corrected.slfc interval=5
 end
 goto end
@@ -59,7 +66,7 @@ MAP:
 # 2. Map All lines. Corrected
 # 3.i Map All lines. Uncorrected
 # 4. Continuum LL and RR independently, for non-selfcal and selfcal cases
- 
+
 # 1.
 set src=$map/$so.cnt
 set rms=0.0065;set tall=0.03

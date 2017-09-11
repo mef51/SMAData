@@ -97,7 +97,7 @@ foreach lin(cs7-6 sis19-18 h13cn4-3 co3-2)
  \rm -fr $src.*
  invert vis=$uvc/$so.$lin.corrected.slfc \
     stokes=i,v beam=$src.bm map=$src.i.mp,$src.v.mp \
-    imsize=128 cell=0.3 options=systemp,double sup=0 line=$vel
+    imsize=128 cell=0.3 options=systemp,double,mfs sup=0 #line=$vel
  foreach stk(i v)
    clean  map=$src.$stk.mp beam=$src.bm out=$src.$stk.cc \
        niters=3000 cutoff=$tall
@@ -112,7 +112,7 @@ foreach lin(cs7-6 sis19-18 h13cn4-3 co3-2)
  \rm -fr $src.*
  invert vis=$uvo/$so.$lin \
     stokes=i,v beam=$src.bm map=$src.i.mp,$src.v.mp \
-    imsize=128 cell=0.3 options=systemp,double sup=0 line=$vel
+    imsize=128 cell=0.3 options=systemp,double,mfs sup=0 #line=$vel
  foreach stk(i v)
    clean  map=$src.$stk.mp beam=$src.bm out=$src.$stk.cc \
        niters=3000 cutoff=$tall
@@ -152,7 +152,7 @@ foreach lin(cnt cs7-6 sis19-18 h13cn4-3 co3-2)
       mask='<'$src.uncorrected.i.cm'>.gt.0.4' \
       out=$src.v-i.perc.uncorrected
  else
-  set rms=0.2;set nxy=4,2
+  set rms=0.2;set nxy=1,1
   maths exp='100*<'$src.v.cm'>/<'$src.i.cm'>' \
       mask='<'$src.i.cm'>.gt.6' \
       out=$src.v-i.perc

@@ -152,7 +152,7 @@ foreach lin(cnt cs7-6 sis19-18 h13cn4-3 co3-2)
       mask='<'$src.uncorrected.i.cm'>.gt.0.4' \
       out=$src.v-i.perc.uncorrected
  else
-  set rms=0.2;set nxy=1,1
+  set rms=0.05;set nxy=1,1
   maths exp='100*<'$src.v.cm'>/<'$src.i.cm'>' \
       mask='<'$src.i.cm'>.gt.6' \
       out=$src.v-i.perc

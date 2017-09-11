@@ -16,7 +16,6 @@ if __name__ == '__main__':
 			'line': 'chan,96,1,64.0',
 		})
 
-	exit()
 
 	lines = ['cnt', 'co3-2', 'cs7-6', 'h13cn4-3', 'sis19-18']
 

@@ -1,223 +1,324 @@
 #!/usr/bin/python3
+
+import shutil, glob, os
 import miriad
 
-def split():
+def split(uvo, uvc, so):
 	""" Split in different files LL and RR """
 	stks = ['ll', 'rr', 'lr', 'rl']
+	lins = ['co3-2', 'sio8-7', 'cnt.usb']
 	for stk in stks:
+		for lin in lins:
+			path = '{}/{}.{}.{}'.format(uvc, so, lin, stk)
+			if os.path.exists(path): shutil.rmtree(path)
+			miriad.uvaver({
+				'vis' : '{}/{}.{}'.format(uvo, so, lin),
+				'out' : '{}/{}.{}.{}'.format(uvc, so, lin, stk),
+				'select' : "'pol('{}')'".format(stk)
+			})
 
+		path = '{}/{}.usb.{}'.format(uvc, so, stk)
+		if os.path.exists(path): shutil.rmtree(path)
 
-foreach stk(ll rr lr rl)
-	foreach lin(co3-2 sio8-7 cnt.usb)
-		miriad.do('@rm -fr $uvc/$so.$lin.$stk')
-		uvaver vis=$uvo/$so.$lin out=$uvc/$so.$lin.$stk select='pol('$stk')'
-	end
-	\rm -fr $uvc/$so.usb.$stk
-	uvaver vis=$uvo/$so.usb out=$uvc/$so.usb.$stk stokes=$stk
-end
-goto end
+		miriad.uvaver({
+			'vis' : '{}/{}.usb'.format(uvo, so),
+			'out' : '{}/{}.usb.{}'.format(uvc, so, stk),
+			'stokes' : stk
+		})
+
+def selfcal(so, uvc):
+	"""
+	Original map used for selfcal in MAPS
+	Independent step for RR and LL (u,v) files
+	1. Selcalibration of continuum
+	2. Applying selfcalibration  for continuum
+	3. Copyinggains to Line data (all in the USB)
+	4. Applying selfcalibration  for lines
+	5. Concanate LL and RR in ine file
+	6. Resort data
+	"""
+	for stk in ['ll', 'rr']:
+		for sb in ['cnt.usb']:
+			miriad.selfcal({
+				'vis' : '{}/{}.{}.{}'.format(uvc, so, sb, stk),
+				'model' : 'MAPS/{}.cont.usb.i.cc'.format(so),
+				'refant' : 6,
+				'interval' : 8,
+				'options' : 'phase'
+			})
+			miriad.gpplt({
+				'vis' : '{}/{}.{}.{}'.format(uvc, so, sb, stk),
+				'device' : '1/xs',
+				'yaxis' : 'phase',
+				'nxy' : '1,3'
+			})
+			input("Press enter to continue...    ")
+
+			path = '{}/{}.{}.{}.slfc'.format(uvc, so, sb, stk)
+			if os.path.exists(path): shutil.rmtree(path)
+
+			miriad.uvaver({
+				'vis' : '{}/{}.{}.{}'.format(uvc, so, sb, stk),
+				'out' : '{}/{}.{}.{}.slfc'.format(uvc, so, sb, stk)
+			})
+		for lin in ['co3-2', 'sio8-7', 'usb']:
+			path = '{}/{}.{}.{}.slfc'.format(uvc, so, lin, stk)
+			if os.path.exists(path): shutil.rmtree(path)
+
+			miriad.gpcopy({
+				'vis' : '{}/{}.cnt.usb.{}'.format(uvc, so, stk),
+				'out' : '{}/{}.{}.{}'.format(uvc, so, lin, stk),
+			})
+			miriad.uvaver({
+				'vis' : '{}/{}.{}.{}'.format(uvc, so, lin, stk),
+				'out' : '{}/{}.{}.{}.slfc'.format(uvc, so, lin, stk),
+			})
+
+	for lin in ['co3-2', 'sio8-7', 'cnt.usb', 'usb']:
+		vis = '{}/{}.{}'.format(uvc, so, lin)
+		for folder in ['tmp.5', 'tmp.6', '{}/{}.{}.corrected.slfc'.format(uvc, so, lin)]:
+			if os.path.exists(folder): shutil.rmtree(folder)
+
+		miriad.uvcat({
+			'vis' : '{0}.rr.slfc,{0}.ll.slfc,{0}.rl,{0}.lr'.format(vis),
+			'out' : 'tmp.5',
+		})
+		miriad.uvsort({
+			'vis' : 'tmp.5',
+			'out' : 'tmp.6',
+		})
+		miriad.uvaver({
+			'vis' : 'tmp.6',
+			'out' : '{}/{}.{}.corrected.slfc'.format(uvc, so, lin),
+			'interval' : 5
+		})
+
+def mapvis(uvo, uvc, so, mapdir):
+	"""
+	Make a map from visibilities
+	1. Continuum Stokes I,V Uncorrected & Corrected data
+	2. Map All lines. Corrected
+	3. Map All lines. Uncorrected
+	4. Continuum LL and RR independently, for non-selfcal and selfcal cases
+	"""
+
+	# 1.
+	src = '{}/{}.cnt'.format(mapdir, so)
+	rms = 0.0065
+	tall = 0.03
+
+	for path in glob.glob('{}.*'.format(src)):
+		if os.path.exists(path): shutil.rmtree(path)
+
+	vis = '{}/{}.cnt.usb.corrected.slfc'.format(uvc, so)
+	for src in ['{}/{}.cnt'.format(mapdir, so), '{}/{}.cnt.uncorrected'.format(mapdir, so)]:
+		miriad.invert({
+			'vis': vis,
+			'stokes': 'i,v',
+			'beam': '{}.bm'.format(src),
+			'map': '{0}.i.mp,{0}.v.mp'.format(src),
+			'imsize': 128,
+			'cell': 0.3,
+			'options': 'systemp,double,mfs',
+			'sup': 0
+		})
+
+		for stk in ['i', 'v']:
+			miriad.clean({
+				'map': '{}.{}.mp'.format(src, stk),
+				'beam': '{}.bm'.format(src),
+				'out': '{}.{}.cc'.format(src, stk),
+				'niters': 3000,
+				'cutoff': tall
+			})
+			miriad.restor({
+				'map': '{}.{}.mp'.format(src, stk),
+				'beam': '{}.bm'.format(src),
+				'model': '{}.{}.cc'.format(src, stk),
+				'out': '{}.{}.cm'.format(src, stk),
+			})
+		vis = '{}/{}.cnt.usb'.format(uvo, so)
+
+	# 2. Map corrected line data
+	# 3. Map uncorrected line data with same paramenters as in 2
+	rms = 0.13
+	tall = 0.50
+	vel = 'vel,43,-31,2,2'
+
+	for lin in ['co3-2', 'sio8-7']:
+		vis = '{}/{}.{}.corrected.slfc'.format(uvc, so, lin)
+		for src in ['{}/{}.{}'.format(mapdir, so, lin), '{}/{}.{}.uncorrected'.format(mapdir, so, lin)]:
+			if lin == 'co3-2':
+				vel = 'vel,43,-31,2,2'
+			elif lin == 'sio8-7':
+				vel = 'vel,27,-20,2,2'
+			for path in glob.glob('{}.*'.format(src)):
+				if os.path.exists(path): shutil.rmtree(path)
+
+			miriad.invert({
+				'vis': vis,
+				'stokes': 'i,v',
+				'beam': '{}.bm'.format(src),
+				'map': '{0}.i.mp,{0}.v.mp'.format(src),
+				'imsize': 128,
+				'cell': 0.3,
+				'options': 'systemp,double,mfs',
+				'sup': 0,
+				#'line': vel
+			})
+
+			for stk in ['i', 'v']:
+				miriad.clean({
+					'map': '{}.{}.mp'.format(src, stk),
+					'beam': '{}.bm'.format(src),
+					'out': '{}.{}.cc'.format(src, stk),
+					'niters': 3000,
+					'cutoff': tall
+				})
+				miriad.restor({
+					'map': '{}.{}.mp'.format(src, stk),
+					'beam': '{}.bm'.format(src),
+					'model': '{}.{}.cc'.format(src, stk),
+					'out': '{}.{}.cm'.format(src, stk),
+				})
+			vis = '{}/{}.{}'.format(uvo, so, lin)
+
+	# 4. nopol is for selfcal case (this option is not used!)
+	rms = 0.01
+	tall = 0.03
+
+	for stk in ['ll', 'rr']:
+		src = '{}/{}.cnt.{}'.format(mapdir, so, stk)
+		for path in glob.glob('{}.*'.format(src)):
+			if os.path.exists(path): shutil.rmtree(path)
+		for pol in ['nopol', 'nocal']:
+			path = '{}.bm'.format(src)
+			if os.path.exists(path): shutil.rmtree(path)
+
+			miriad.invert({
+				'vis': '{}/{}.cnt.usb.{}'.format(uvc, so, stk),
+				'beam': '{}.bm'.format(src),
+				'map': '{}.{}.mp'.format(src, pol),
+				'imsize': 128,
+				'cell': 0.3,
+				'options': 'systemp,double,mfs,{}'.format(pol),
+				'sup': 0
+			})
+			miriad.clean({
+				'map': '{}.{}.mp'.format(src, pol),
+				'beam': '{}.bm'.format(src),
+				'out': '{}.{}.cc'.format(src, pol),
+				'niters': 3000,
+				'cutoff': tall
+			})
+			miriad.restor({
+				'map': '{}.{}.mp'.format(src, pol),
+				'beam': '{}.bm'.format(src),
+				'model': '{}.{}.cc'.format(src, pol),
+				'out': '{}.{}.cm'.format(src, pol),
+			})
+
+def disp(uvo, uvc, so, mapdir):
+	"""
+	1. Plot uncorrected channel map
+	2. Plot corrected channel map
+	"""
+	for lin in ['cnt', 'co3-2', 'sio8-7']:
+		devicetype = 'ps/cps'
+		filename = lin
+		src = '{}/{}.{}'.format(mapdir, so, lin)
+		nxy = '1,1'
+
+		path = '{}.v-i.perc'.format(src)
+		if os.path.exists(path): shutil.rmtree(path)
+		path = '{}.v-i.perc.uncorrected'.format(src)
+		if os.path.exists(path): shutil.rmtree(path)
+
+		if lin == 'cnt':
+			rms = 0.03
+			for suffix in ['', 'uncorrected.']:
+				opts = {
+					'exp': '100*\<{0}.{1}v.cm\>/\<{0}.{1}i.cm\>'.format(src, suffix),
+					'mask': '\<{}.{}i.cm\>.gt.0.4'.format(src, suffix),
+				}
+				suffix = '.uncorrected' if suffix != '' else ''
+				opts['out'] =  '{}.v-i.perc{}'.format(src, suffix)
+				miriad.maths(opts)
+		else:
+			if lin == 'co3-2':  rms = 0.13
+			if lin == 'sio8-7': rms = 0.06
+			for suffix in ['', 'uncorrected.']:
+				val = 6 if suffix == '' else 8
+				opts = {
+						'exp': '100*\<{0}.{1}v.cm\>/\<{0}.{1}i.cm\>'.format(src, suffix),
+						'mask': '\<{}.{}i.cm\>.gt.{}'.format(src, suffix, val),
+					}
+				suffix = '.uncorrected' if suffix != '' else ''
+				opts['out'] =  '{}.v-i.perc{}'.format(src, suffix)
+				miriad.maths(opts)
+
+		for datatype in ['uncorr', 'corr']:
+			cgdispOpts = {
+				'type': 'cont,cont',
+				'labtyp': 'arcsec,arcsec',
+				'options': 'full,beambl,3val',
+				'csize': '0,1,0,0',
+				'cols1': 2, 'cols2': 8,
+				'levs1': '15,35,55,75,95',
+				'nxy': nxy,
+			}
+
+			if datatype is 'uncorr':
+				# flux plot
+				cgdispOpts['slev'] = 'p,1,a,{}'.format(rms)
+				cgdispOpts['device'] = '{}.uncorr.{}'.format(filename, devicetype)
+				cgdispOpts['in'] = '{0}.uncorrected.i.cm,{0}.uncorrected.v.cm'.format(src)
+				cgdispOpts['levs2'] = '-8,-7,-6,-5,-4,-3,-2,2,3,4,5,6,7,8'
+				miriad.cgdisp(cgdispOpts)
+				miriad.imstat({'in': '{}.i.cm'.format(src), 'region':'box\(3,3,50,125\)'})
+				miriad.imstat({'in': '{}.v.cm'.format(src), 'region':'box\(3,3,50,125\)'})
+				input("Press enter to continue...")
+
+				# v/i plot
+				cgdispOpts['slev'] = 'p,1,a,1'
+				cgdispOpts['device'] = '{}.uncorr.perc.{}'.format(filename, devicetype)
+				cgdispOpts['in'] = '{0}.uncorrected.i.cm,{0}.v-i.perc.uncorrected'.format(src)
+				cgdispOpts['levs2'] = '-6,-5,-4,-3,-2,-1,1,2,3,4,5,6'
+				miriad.cgdisp(cgdispOpts)
+				input("Press enter to continue...")
+			else:
+				# flux plot
+				cgdispOpts['slev'] = 'p,1,a,{}'.format(rms)
+				cgdispOpts['device'] = '{}.corr.{}'.format(filename, devicetype)
+				cgdispOpts['in'] = '{0}.i.cm,{0}.v.cm'.format(src)
+				cgdispOpts['levs2'] = '-8,-7,-6,-5,-4,-3,-2,2,3,4,5,6,7,8'
+				miriad.cgdisp(cgdispOpts)
+				miriad.imstat({'in': '{}.i.cm'.format(src), 'region':'box\(3,3,50,125\)'})
+				miriad.imstat({'in': '{}.v.cm'.format(src), 'region':'box\(3,3,50,125\)'})
+				input("Press enter to continue...   ")
+
+				# v/i plot
+				cgdispOpts['slev'] = 'p,1,a,1'
+				cgdispOpts['device'] = '{}.corr.perc.{}'.format(filename, devicetype)
+				cgdispOpts['in'] = '{0}.i.cm,{0}.v-i.perc'.format(src)
+				cgdispOpts['levs2'] = '-6,-5,-4,-3,-2,-1,1,2,3,4,5,6'
+				miriad.cgdisp(cgdispOpts)
+				input("Press enter to continue...   ")
+
+def peak(so, mapdir):
+	src = '{}/{}.cnt'.format(mapdir, so)
+	for li in ['ll.nocal', 'rr.nocal', 'll.nopol', 'rr.nopol']:
+		miriad.maxfit({'in': '{}.{}.cm'.format(src, li), 'log': 'maxfit_{}.{}'.format(so, li)})
+	miriad.maxfit({'in': '{}.i.cm'.format(src), 'log': 'maxfit_{}.stokesI'.format(so)})
 
 if __name__ == '__main__':
 	so = 'orkl_080106'
 	uvo = 'UVDATA'
 	uvc = 'UVOffsetCorrect'
-	map = 'MAPSCorrect'
+	mapdir = 'MAPSCorrect'
 	rms = '0.0065'
 
-	goto $1
-
-
-SELFCAL:
-# Original map used for selfcal in MAPS
-# Independent step for RR and LL (u,v) files
-# 1. Selcalibration of continuum
-# 2. Applying selfcalibration  for continuum
-# 3. Copyinggains to Line data (all in the USB)
-# 4. Applying selfcalibration  for lines
-# 5. Concanate LL and RR in ine file
-# 6. Resort data
-tall=0.01
-foreach stk(ll rr)
-	foreach sb(cnt.usb)
-		selfcal vis=$uvc/$so.$sb.$stk  model=MAPS/$so.cont.usb.i.cc \
-			refant=6 interval=8 options=phase
-		gpplt vis=$uvc/$so.$sb.$stk device=1/xs yaxis=phase nxy=1,3
-		echo -n "Press enter to continue   ";set rs=$<
-		\rm -rf $uvc/$so.$sb.$stk.slfc
-		uvaver vis=$uvc/$so.$sb.$stk out=$uvc/$so.$sb.$stk.slfc
-	end
-	foreach lin(co3-2 sio8-7 usb)
-		\rm -fr $uvc/$so.$lin.$stk.slfc
-		gpcopy vis=$uvc/$so.cnt.usb.$stk out=$uvc/$so.$lin.$stk
-		uvaver vis=$uvc/$so.$lin.$stk out=$uvc/$so.$lin.$stk.slfc
-	end
-end
-foreach lin(co3-2 sio8-7 cnt.usb usb)
-	set vis=$uvc/$so.$lin
-	\rm -rf tmp.5 tmp.6 $uvc/$so.$lin.corrected.slfc
-	uvcat vis=$vis.rr.slfc,$vis.ll.slfc,$vis.rl,$vis.lr out=tmp.5
-	uvsort vis=tmp.5 out=tmp.6
-	uvaver vis=tmp.6 out=$uvc/$so.$lin.corrected.slfc interval=5
-end
-goto end
-
-MAP:
-# Map
-# 1. Continuum Stokes I,V Uncorrected & Corrected data
-# 2. Map All lines. Corrected
-# 3.i Map All lines. Uncorrected
-# 4. Continuum LL and RR independently, for non-selfcal and selfcal cases
-
-# 1.
-set src=$map/$so.cnt
-set rms=0.0065;set tall=0.03
-\rm -fr $src.*
-invert vis=$uvc/$so.cnt.usb.corrected.slfc \
-   stokes=i,v beam=$src.bm map=$src.i.mp,$src.v.mp \
-   imsize=128 cell=0.3 options=systemp,double,mfs  sup=0
-foreach stk(i v)
-  clean  map=$src.$stk.mp beam=$src.bm out=$src.$stk.cc \
-      niters=3000 cutoff=$tall
-  restor map=$src.$stk.mp beam=$src.bm model=$src.$stk.cc out=$src.$stk.cm
-end
-set src=$map/$so.cnt.uncorrected
-invert vis=$uvo/$so.cnt.usb \
-   stokes=i,v beam=$src.bm map=$src.i.mp,$src.v.mp \
-   imsize=128 cell=0.3 options=systemp,double,mfs  sup=0
-foreach stk(i v)
-  clean  map=$src.$stk.mp beam=$src.bm out=$src.$stk.cc \
-      niters=3000 cutoff=$tall
-  restor map=$src.$stk.mp beam=$src.bm model=$src.$stk.cc out=$src.$stk.cm
-end
-
-# 2. Map corrected line data
-set rms=0.13; set tall=0.50
-set vel=vel,43,-31,2,2
-foreach lin(co3-2 sio8-7)
- set src=$map/$so.$lin
- if($lin == co3-2) set vel=vel,43,-31,2,2
- if($lin == sio8-7) set vel=vel,27,-20,2,2
- \rm -fr $src.*
- invert vis=$uvc/$so.$lin.corrected.slfc \
-    stokes=i,v beam=$src.bm map=$src.i.mp,$src.v.mp \
-    imsize=128 cell=0.3 options=systemp,double,mfs sup=0 #line=$vel
- foreach stk(i v)
-   clean  map=$src.$stk.mp beam=$src.bm out=$src.$stk.cc \
-       niters=3000 cutoff=$tall
-   restor map=$src.$stk.mp beam=$src.bm model=$src.$stk.cc out=$src.$stk.cm
- end
-end
-# 3. Map uncorrected line data with same paramenters as in 2
-# set rms=0.13; set tall=0.50
-foreach lin(co3-2 sio8-7)
- if($lin == co3-2) set vel=vel,43,-31,2,2
- if($lin == sio8-7) set vel=vel,27,-20,2,2
- set src=$map/$so.$lin.uncorrected
- \rm -fr $src.*
- invert vis=$uvo/$so.$lin \
-    stokes=i,v beam=$src.bm map=$src.i.mp,$src.v.mp \
-    imsize=128 cell=0.3 options=systemp,double,mfs sup=0 #line=$vel
- foreach stk(i v)
-   clean  map=$src.$stk.mp beam=$src.bm out=$src.$stk.cc \
-       niters=3000 cutoff=$tall
-   restor map=$src.$stk.mp beam=$src.bm model=$src.$stk.cc out=$src.$stk.cm
- end
-end
-# 4. nopol is for selfcal case (this option is not used!)
-set rms=0.01;set tall=0.03
-foreach stk(ll rr)
- set src=$map/$so.cnt.$stk
- \rm -rf $src.*
- foreach pol(nopol nocal)
-  \rm -rf $src.bm
-  invert vis=$uvc/$so.cnt.usb.$stk \
-    beam=$src.bm map=$src.$pol.mp \
-    imsize=128 cell=0.3 options=systemp,double,mfs,$pol  sup=0
-  clean  map=$src.$pol.mp beam=$src.bm out=$src.$pol.cc \
-      niters=3000 cutoff=$tall
-  restor map=$src.$pol.mp beam=$src.bm model=$src.$pol.cc out=$src.$pol.cm
- end
-end
-goto end
-
-DISP:
-# 1. Plot uncorrected channel map
-# 2. Plot corrected channel map
-foreach lin(cnt co3-2 sio8-7)
- set devicetype=ps/cps
- set filename=$lin
- set src=$map/$so.$lin
- \rm -rf $src.v-i.perc $src.v-i.perc.uncorrected
- if ($lin == 'cnt') then
-  set rms=0.03;set nxy=1,1
-  maths exp='100*<'$src.v.cm'>/<'$src.i.cm'>' \
-      mask='<'$src.i.cm'>.gt.0.4' \
-      out=$src.v-i.perc
-  maths exp='100*<'$src.uncorrected.v.cm'>/<'$src.uncorrected.i.cm'>' \
-      mask='<'$src.uncorrected.i.cm'>.gt.0.4' \
-      out=$src.v-i.perc.uncorrected
- else
-  if($lin == sio8-7) set rms=0.06
-  if($lin == co3-2) set rms=0.13
-  set nxy=1,1
-  maths exp='100*<'$src.v.cm'>/<'$src.i.cm'>' \
-      mask='<'$src.i.cm'>.gt.6' \
-      out=$src.v-i.perc
-  maths exp='100*<'$src.uncorrected.v.cm'>/<'$src.uncorrected.i.cm'>' \
-      mask='<'$src.uncorrected.i.cm'>.gt.8' \
-      out=$src.v-i.perc.uncorrected
- endif
- cgdisp type=cont,cont labtyp=arcsec,arcsec \
-       device=$filename.uncorr.$devicetype options=full,beambl,3val csize=0,1,0,0 \
-       in=$src.uncorrected.i.cm,$src.uncorrected.v.cm cols1=2 cols2=8 \
-       slev=p,1,a,$rms \
-       levs1=15,35,55,75,95 \
-       levs2=-8,-7,-6,-5,-4,-3,-2,2,3,4,5,6,7,8 \
-       nxy=$nxy \
-       # region='arcsec,box(-15,-15,15,15)'
- imstat in=$src.i.cm region='box(3,3,50,125)'
- imstat in=$src.v.cm region='box(3,3,50,125)'
- echo "Press Return to continue"; set nn=$<
- cgdisp type=cont,cont labtyp=arcsec,arcsec \
-       device=$filename.corr.$devicetype options=full,beambl,3val csize=0,1,0,0 \
-       in=$src.i.cm,$src.v.cm cols1=2 cols2=8 \
-       slev=p,1,a,$rms \
-       levs1=15,35,55,75,95 \
-       levs2=-8,-7,-6,-5,-4,-3,-2,2,3,4,5,6,7,8 \
-       nxy=$nxy \
-       # region='arcsec,box(-15,-15,15,15)'
- imstat in=$src.i.cm region='box(3,3,50,125)'
- imstat in=$src.v.cm region='box(3,3,50,125)'
- echo "Press Return to continue"; set nn=$<
- cgdisp type=cont,cont labtyp=arcsec,arcsec \
-       device=$filename.uncorr.perc.ps/cps options=full,beambl,3val \
-       in=$src.uncorrected.i.cm,$src.v-i.perc.uncorrected cols1=2 cols1=8 \
-       slev=p,1,a,1 \
-       levs1=15,35,55,75,95 \
-       levs2=-6,-5,-4,-3,-2,-1,1,2,3,4,5,6 \
-       nxy=$nxy \
-       # region='arcsec,box(-5.5,-6,6.5,6)'
- echo "Press Return to continue"; set nn=$<
- cgdisp type=cont,cont labtyp=arcsec,arcsec \
-       device=$filename.corr.perc.ps/cps options=full,beambl,3val \
-       in=$src.i.cm,$src.v-i.perc cols1=2 cols1=8 \
-       slev=p,1,a,1 \
-       levs1=15,35,55,75,95 \
-       levs2=-6,-5,-4,-3,-2,-1,1,2,3,4,5,6 \
-       nxy=$nxy \
-       # region='arcsec,box(-5.5,-6,6.5,6)'
- echo "Press Return to continue"; set nn=$<
-end
-goto end
-
-PEAK:
-set src=$map/$so.cnt
-foreach li(ll.nocal rr.nocal ll.nopol rr.nopol)
- maxfit in=$src.$li.cm log=maxfit'_'$so.$li
-end
-maxfit in=$src.i.cm log=maxfit'_'$so.stokesI
-
-goto end
-
-
-end:
+	# split(uvo, uvc, so)
+	# selfcal(so, uvc)
+	# mapvis(uvo, uvc, so, mapdir)
+	disp(uvo, uvc, so, mapdir)

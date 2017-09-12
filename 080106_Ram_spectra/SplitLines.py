@@ -32,7 +32,7 @@ print("Starting with:", vis + '.' + sb)
 miriad.uvaver({
 	'vis': '{}.{}'.format(vis, sb),
 	'out': 'tmp.1',
-	'select': 'win\({}\)'.format(win),
+	'select': 'win({})'.format(win),
 })
 
 miriad.uvputhd({

@@ -14,14 +14,14 @@ molecule = 'CO'
 if molecule == 'CO':
 	freq = 345.7959
 	lab = 'co3-2'
-	reg = 'arcsec,box\(-4,-4,4,4\)'
+	reg = 'arcsec,box(-4,-4,4,4)'
 	rms = 0.2
 	rng = '0,30'
 elif molecule == 'SiO':
 	line = 'vel,27,-20,2,2'
 	freq = 347.3306
 	lab = 'sio8-7'
-	reg = 'arcsec,box\(-4,-4,4,4\)'
+	reg = 'arcsec,box(-4,-4,4,4)'
 	rms = 0.3
 	rng = '0,30'
 
@@ -64,7 +64,7 @@ for stk in ['i', 'q', 'u', 'v']:
 		'out': '{}.{}.cm'.format(src, stk),
 	})
 
-miriad.imstat({'in': '{}.i.cm'.format(src), 'region': 'box\(6,6,50,122\)'})
+miriad.imstat({'in': '{}.i.cm'.format(src), 'region': 'box(6,6,50,122)'})
 
 input('Press return to continue')
 
@@ -80,10 +80,10 @@ for stk in ['q', 'u', 'v']:
 		'cols1': 2,
 		'slev': 'a,{}'.format(rms),
 		'levs1': '-21,-18,-15,-12,-9,-6,-3,3,6,9,12,15,18,21',
-		'region': 'arcsec,box\(-10,-10,10,10\)',
+		'region': 'arcsec,box(-10,-10,10,10)',
 		'nxy': '6,3'
 	})
-	miriad.imstat({'in': '{}.{}.cm'.format(src, stk), 'region': 'box\(6,6,50,122\)'})
+	miriad.imstat({'in': '{}.{}.cm'.format(src, stk), 'region': 'box(6,6,50,122)'})
 	input('Press return to continue')
 
 for stk in ['i', 'q', 'u', 'v']:
@@ -96,8 +96,8 @@ path = '{}.v-i.perc'.format(src)
 if os.path.exists(path): shutil.rmtree(path)
 
 miriad.maths({
-	'exp': '100*\<{0}.v.cm\>/\<{0}.i.cm\>'.format(src),
-	'mask': '\<{}.i.cm\>.gt.2'.format(src),
+	'exp': '100*<{0}.v.cm>/<{0}.i.cm>'.format(src),
+	'mask': '<{}.i.cm>.gt.2'.format(src),
 	'out': '{}.v-i.perc'.format(src)
 })
 
@@ -111,6 +111,6 @@ miriad.cgdisp({
 	'cols1': 8,
 	'slev': 'a,1,p,1',
 	'levs1': '-8,-6,-4,-2,2,4,6,8',
-	'region': 'arcsec,box\(-5.5,-6,6.5,6\)',
+	'region': 'arcsec,box(-5.5,-6,6.5,6)',
 	'nxy': '6,3'
 })

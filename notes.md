@@ -261,3 +261,8 @@ after all this processing.
 5 sept 2017
 -----------
 * 5sigma in co IRC+10216 when channels are averaged!
+
+12 Sept 2017
+------------
+* might be possible to rewrite miriad.py to generate the functions
+	* https://stackoverflow.com/questions/13184281/python-dynamic-function-creation-with-custom-names

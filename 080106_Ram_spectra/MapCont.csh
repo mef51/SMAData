@@ -54,7 +54,7 @@ cgdisp type=cont,pix labtyp=arcsec,arcsec \
        slev=a,1,p,1 levs1=-8,-6,-4,-2,2,4,6,8 \
        region='arcsec,box(-5.5,-6,6.5,6)'
 cgdisp type=cont,pixel labtyp=arcsec,arcsec \
-       device=$src.eps/cps options=full,beambl \
+       device=$src.ps/cps options=full,beambl \
        in=$src.v-i.perc,$src.i.cm cols1=8  \
        slev=a,1,p,1 levs1=-8,-6,-4,-2,2,4,6,8 \
        region='arcsec,box(-5.5,-6,6.5,6)'

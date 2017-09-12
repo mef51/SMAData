@@ -50,6 +50,7 @@ end
 foreach stk(i q u v)
  imstat in=$src.$stk.cm
 end
+
 DISP:
 \rm -r $src.v-i.perc
 maths exp='100*<'$src.v.cm'>/<'$src.i.cm'>' mask='<'$src.i.cm'>.gt.2' \
@@ -60,9 +61,8 @@ cgdisp type=cont,pix labtyp=arcsec,arcsec \
        slev=a,1,p,1 levs1=-8,-6,-4,-2,2,4,6,8 \
        region='arcsec,box(-5.5,-6,6.5,6)' nxy=6,3
 cgdisp type=cont,pixel labtyp=arcsec,arcsec \
-       device=$src.eps/cps options=full,beambl,3val \
+       device=$src.ps/cps options=full,beambl,3val \
        in=$src.v-i.perc,$src.i.cm cols1=8  \
        slev=a,1,p,1 levs1=-8,-6,-4,-2,2,4,6,8 \
        region='arcsec,box(-5.5,-6,6.5,6)' nxy=6,3
 
-end:

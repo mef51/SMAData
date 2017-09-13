@@ -266,3 +266,15 @@ after all this processing.
 ------------
 * might be possible to rewrite miriad.py to generate the functions
 	* https://stackoverflow.com/questions/13184281/python-dynamic-function-creation-with-custom-names
+
+13 Sept 2017
+------------
+* NGC7538 is a dim object but has two strong lines:
+	* 345.8, CO
+	* 346.6, who knows.
+	* There is circular polarization in both of them. Orion had a line at 346.6 GHZ but no CP. In Orion the 346.6 GHz was weaker than the CO, but in NGC7538 the 346.6 line is stronger than the CO.
+	* Ok this 346.6 line is cool, its significant, and its strong. What is it?
+		* TODO:
+			* write some utils for finding the RMS so I can figure out what's the best averaging
+			* Correct for offset!
+			* Find a control

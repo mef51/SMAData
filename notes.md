@@ -278,3 +278,7 @@ after all this processing.
 			* write some utils for finding the RMS so I can figure out what's the best averaging
 			* Correct for offset!
 			* Find a control
+
+14 Sept 2017
+------------
+* CH2CO is at 346.6 GHz (https://arxiv.org/pdf/astro-ph/0702066.pdf) in NGC7538

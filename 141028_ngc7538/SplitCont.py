@@ -3,27 +3,25 @@
 import shutil, glob, os
 import miriad
 
-so = 'orkl_080106'
+"""
+Separate the continuum from molecular lines
+"""
+
+so = 'NGC7538S-s4'
 dd = 'UVDATA'
-lb = 'vis.uvcal'
+vis = '{}/{}'.format(dd, so)
 
 sideband = 'USB'
 
-if sideband == 'LSB':
-	sb = 'lsb'
-	ch = 'vel,717,-2632,5.0,5.0'
-	freq = 331.6
-	lab = 'cnt.lsb'
-	free = '1,194,203,346,355,648,659,700,709,717'
-elif sideband == 'USB':
-  # 65 110 200 280 300 400 580 600 620 640
-	sb = 'usb'
-	ch = 'vel,345,-2149,5.0,5.0'
-	freq = 345.0
-	lab = 'cnt.usb'
-	free = '1,23,33,85,95,104,108,140,150,166,180,216,228,268,305,322,329,345'
+sb = 'usb'
+numChannels = miriad.getNumChannels('{}.{}'.format(vis, sb))
+velrange = miriad.getVelocityRange('{}.{}'.format(vis, sb))
 
-vis = 'UVDATA/{}'.format(so)
+ch = 'vel,{},{},5.0,5.0'.format((abs(velrange[0])+abs(velrange[1]))/5+2, velrange[1])
+freq = 345.0
+lab = 'cnt.usb'
+free = '1,23,33,85,95,104,108,140,150,166,180,216,228,268,305,322,329,345'
+
 path = '{}.{}'.format(vis, lab)
 if os.path.exists(path): shutil.rmtree(path)
 for path in glob.glob('tmp.*'):

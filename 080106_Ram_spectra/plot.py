@@ -3,6 +3,8 @@
 import miriad
 
 if __name__ == '__main__':
+	miriad.showChannels('tmp.3')
+	# exit()
 	miriad.uvspec({
 		'vis': 'UVDATA/orkl_080106.usb,UVOffsetCorrect/orkl_080106.usb.corrected.slfc',
 		'device': '2/xs',

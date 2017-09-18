@@ -282,3 +282,11 @@ after all this processing.
 14 Sept 2017
 ------------
 * CH2CO is at 346.6 GHz (https://arxiv.org/pdf/astro-ph/0702066.pdf) in NGC7538
+
+18 Sept 2017
+------------
+* The phase is uncalibrated in the NGC7538 data
+* I used the wrong channel numbers when splitting continuum in Orion KL.
+	* Josep Miquel also used the wrong channel numbers in IRC+10216
+	* we both looked at tmp.4 when we should have looked at tmp.3
+	* the quick fix (without changing channel numbers) is just tell uvlin to use tmp.4

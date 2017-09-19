@@ -290,3 +290,7 @@ after all this processing.
 	* Josep Miquel also used the wrong channel numbers in IRC+10216
 	* we both looked at tmp.4 when we should have looked at tmp.3
 	* the quick fix (without changing channel numbers) is just tell uvlin to use tmp.4
+* implement click on matplotlib window prints x,y relative to plot
+	* https://stackoverflow.com/questions/25521120/store-mouse-click-event-coordinates-with-matplotlib
+	* https://matplotlib.org/users/event_handling.html
+	* https://stackoverflow.com/questions/15721094/detecting-mouse-event-in-an-image-with-matplotlib

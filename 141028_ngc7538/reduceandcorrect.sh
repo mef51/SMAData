@@ -1,8 +1,7 @@
 #!/bin/bash
 
-./SplitCont.py USB
-# ./SplitLines.py CO
-# ./SplitLines.py SiO
+./SplitCont.py
+./SplitLines.py
 # ./MapCont.py USB MAP
 # ./MapLines.py CO MAPS
 # ./MapLines.py SiO MAPS

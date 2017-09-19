@@ -7,32 +7,25 @@ import miriad
 so = 'NGC7538S-s4'
 dd = 'UVDATA'
 
-
-# 'vel,{},{},2,2'.format((abs(velrange[0])+abs(velrange[1]))/2+2, velrange[1])
-
-
 molecules = ['CO', 'CH2CO']
 for molecule in molecules:
 	if molecule == 'CO':
 		freq = 345.7959
-		line = 'vel,43,-31,2,2'
 		lab = 'co3-2'
-		reg = 'arcsec,box(-4,-4,4,4)'
-		rms = 0.2
+		rms = 0.15
 		rng = '0,30'
 	elif molecule == 'CH2CO':
-		line = 'vel,27,-20,2,2'
 		freq = 346.603
 		lab = 'ch2co17-16'
-		reg = 'arcsec,box(-4,-4,4,4)'
-		rms = 0.3
+		rms = 0.057
 		rng = '0,30'
-
 
 	vis = 'UVDATA/{}.{}'.format(so, lab)
 	src = 'MAPS/{}.{}'.format(so, lab)
 	tall = rms*3
 
+	# line selection
+	line = miriad.averageVelocityLine(vis, 2)
 
 	# MAPS:
 	for path in glob.glob('{}.*'.format(src)):

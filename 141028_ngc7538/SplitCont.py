@@ -13,9 +13,8 @@ vis = '{}/{}'.format(dd, so)
 
 sb = 'usb'
 numChannels = miriad.getNumChannels('{}.{}'.format(vis, sb))
-velrange = miriad.getVelocityRange('{}.{}'.format(vis, sb))
+ch = miriad.averageVelocityLine('{}.{}'.format(vis, sb), 5)
 
-ch = 'vel,{},{},5.0,5.0'.format((abs(velrange[0])+abs(velrange[1]))/5+2, velrange[1])
 freq = 345.8
 lab = 'cnt.usb'
 free = '6,107,275,478,500,725,762,815,833,1096,1109,1351,1366,1531'

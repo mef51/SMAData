@@ -12,11 +12,11 @@ def plotPhase(vis, device='2/xs'):
 		'nxy': '2,2'
 	})
 
-vis = 'UVDATA/NGC7538S-s4.ch2co17-16'
+vis = 'UVDATA/NGC7538S-s4.co3-2'
 numChannels = miriad.getNumChannels(vis)
 velrange = miriad.getVelocityRange(vis)
 
-miriad.showChannels(vis, freq=True)
+miriad.showChannels(vis)
 exit()
 miriad.uvspec({
 	'vis': vis,

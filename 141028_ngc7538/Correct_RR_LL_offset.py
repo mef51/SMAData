@@ -3,30 +3,21 @@
 import shutil, glob, os
 import miriad
 
-def split(uvo, uvc, so):
+def split(uvo, uvc, so, lines=[]):
 	""" Split in different files LL and RR """
 	stks = ['ll', 'rr', 'lr', 'rl']
-	lins = ['co3-2', 'sio8-7', 'cnt.usb']
 	for stk in stks:
-		for lin in lins:
+		for lin in lines:
 			path = '{}/{}.{}.{}'.format(uvc, so, lin, stk)
 			if os.path.exists(path): shutil.rmtree(path)
+
 			miriad.uvaver({
 				'vis' : '{}/{}.{}'.format(uvo, so, lin),
 				'out' : '{}/{}.{}.{}'.format(uvc, so, lin, stk),
-				'select' : "'pol('{}')'".format(stk)
+				'select' : 'pol({})'.format(stk)
 			})
 
-		path = '{}/{}.usb.{}'.format(uvc, so, stk)
-		if os.path.exists(path): shutil.rmtree(path)
-
-		miriad.uvaver({
-			'vis' : '{}/{}.usb'.format(uvo, so),
-			'out' : '{}/{}.usb.{}'.format(uvc, so, stk),
-			'stokes' : stk
-		})
-
-def selfcal(so, uvc):
+def selfcal(so, uvc, lines=[]):
 	"""
 	Original map used for selfcal in MAPS
 	Independent step for RR and LL (u,v) files
@@ -36,9 +27,12 @@ def selfcal(so, uvc):
 	4. Applying selfcalibration  for lines
 	5. Concanate LL and RR in ine file
 	6. Resort data
+
+	lines: ex. ['co3-2', 'sio8-7', 'cnt.usb', 'usb']
 	"""
+	calibrator = 'cnt.usb'
 	for stk in ['ll', 'rr']:
-		for sb in ['cnt.usb']:
+		for sb in [calibrator]:
 			miriad.selfcal({
 				'vis' : '{}/{}.{}.{}'.format(uvc, so, sb, stk),
 				'model' : 'MAPS/{}.cont.usb.i.cc'.format(so),
@@ -52,7 +46,7 @@ def selfcal(so, uvc):
 				'yaxis' : 'phase',
 				'nxy' : '1,3'
 			})
-			input("Press enter to continue...    ")
+			input("Press enter to continue...")
 
 			path = '{}/{}.{}.{}.slfc'.format(uvc, so, sb, stk)
 			if os.path.exists(path): shutil.rmtree(path)
@@ -61,7 +55,7 @@ def selfcal(so, uvc):
 				'vis' : '{}/{}.{}.{}'.format(uvc, so, sb, stk),
 				'out' : '{}/{}.{}.{}.slfc'.format(uvc, so, sb, stk)
 			})
-		for lin in ['co3-2', 'sio8-7', 'usb']:
+		for lin in [l for l in lines if l != calibrator]: # iterate over lines excluding the calibrator
 			path = '{}/{}.{}.{}.slfc'.format(uvc, so, lin, stk)
 			if os.path.exists(path): shutil.rmtree(path)
 
@@ -74,7 +68,7 @@ def selfcal(so, uvc):
 				'out' : '{}/{}.{}.{}.slfc'.format(uvc, so, lin, stk),
 			})
 
-	for lin in ['co3-2', 'sio8-7', 'cnt.usb', 'usb']:
+	for lin in lines:
 		vis = '{}/{}.{}'.format(uvc, so, lin)
 		for folder in ['tmp.5', 'tmp.6', '{}/{}.{}.corrected.slfc'.format(uvc, so, lin)]:
 			if os.path.exists(folder): shutil.rmtree(folder)
@@ -93,7 +87,7 @@ def selfcal(so, uvc):
 			'interval' : 5
 		})
 
-def mapvis(uvo, uvc, so, mapdir):
+def mapvis(uvo, uvc, so, mapdir, lines=[]):
 	"""
 	Make a map from visibilities
 	1. Continuum Stokes I,V Uncorrected & Corrected data
@@ -101,10 +95,10 @@ def mapvis(uvo, uvc, so, mapdir):
 	3. Map All lines. Uncorrected
 	4. Continuum LL and RR independently, for non-selfcal and selfcal cases
 	"""
+	calibrator = 'cnt.usb'
 
 	# 1.
 	src = '{}/{}.cnt'.format(mapdir, so)
-	rms = 0.0065
 	tall = 0.03
 
 	for path in glob.glob('{}.*'.format(src)):
@@ -141,17 +135,16 @@ def mapvis(uvo, uvc, so, mapdir):
 
 	# 2. Map corrected line data
 	# 3. Map uncorrected line data with same paramenters as in 2
-	rms = 0.13
 	tall = 0.50
-	vel = 'vel,43,-31,2,2'
 
-	for lin in ['co3-2', 'sio8-7']:
+	# remove continuum, its already been mapped
+	lines.remove(calibrator)
+	lines.remove('usb')
+
+	for lin in lines:
 		vis = '{}/{}.{}.corrected.slfc'.format(uvc, so, lin)
 		for src in ['{}/{}.{}'.format(mapdir, so, lin), '{}/{}.{}.uncorrected'.format(mapdir, so, lin)]:
-			if lin == 'co3-2':
-				vel = 'vel,43,-31,2,2'
-			elif lin == 'sio8-7':
-				vel = 'vel,27,-20,2,2'
+			line = miriad.averageVelocityLine(vis, 2)
 			for path in glob.glob('{}.*'.format(src)):
 				if os.path.exists(path): shutil.rmtree(path)
 
@@ -184,7 +177,6 @@ def mapvis(uvo, uvc, so, mapdir):
 			vis = '{}/{}.{}'.format(uvo, so, lin)
 
 	# 4. nopol is for selfcal case (this option is not used!)
-	rms = 0.01
 	tall = 0.03
 
 	for stk in ['ll', 'rr']:
@@ -218,12 +210,14 @@ def mapvis(uvo, uvc, so, mapdir):
 				'out': '{}.{}.cm'.format(src, pol),
 			})
 
-def disp(uvo, uvc, so, mapdir):
+def disp(uvo, uvc, so, mapdir, lines=[], stokesVrms=[]):
 	"""
 	1. Plot uncorrected channel map
 	2. Plot corrected channel map
 	"""
-	for lin in ['cnt', 'co3-2', 'sio8-7']:
+
+	for i, lin in enumerate(lines):
+	# for lin in ['cnt', 'co3-2', 'sio8-7']:
 		devicetype = 'ps/cps'
 		filename = lin
 		src = '{}/{}.{}'.format(mapdir, so, lin)
@@ -234,24 +228,22 @@ def disp(uvo, uvc, so, mapdir):
 		path = '{}.v-i.perc.uncorrected'.format(src)
 		if os.path.exists(path): shutil.rmtree(path)
 
+		rms = stokesVrms[i]
 		if lin == 'cnt':
-			rms = 0.03
 			for suffix in ['', 'uncorrected.']:
 				opts = {
-					'exp': '100*\<{0}.{1}v.cm\>/\<{0}.{1}i.cm\>'.format(src, suffix),
-					'mask': '\<{}.{}i.cm\>.gt.0.4'.format(src, suffix),
+					'exp': '100*<{0}.{1}v.cm>/<{0}.{1}i.cm>'.format(src, suffix),
+					'mask': '<{}.{}i.cm>.gt.0.4'.format(src, suffix),
 				}
 				suffix = '.uncorrected' if suffix != '' else ''
 				opts['out'] =  '{}.v-i.perc{}'.format(src, suffix)
 				miriad.maths(opts)
 		else:
-			if lin == 'co3-2':  rms = 0.13
-			if lin == 'sio8-7': rms = 0.06
 			for suffix in ['', 'uncorrected.']:
 				val = 6 if suffix == '' else 8
 				opts = {
-						'exp': '100*\<{0}.{1}v.cm\>/\<{0}.{1}i.cm\>'.format(src, suffix),
-						'mask': '\<{}.{}i.cm\>.gt.{}'.format(src, suffix, val),
+						'exp': '100*<{0}.{1}v.cm>/<{0}.{1}i.cm>'.format(src, suffix),
+						'mask': '<{}.{}i.cm>.gt.{}'.format(src, suffix, val),
 					}
 				suffix = '.uncorrected' if suffix != '' else ''
 				opts['out'] =  '{}.v-i.perc{}'.format(src, suffix)
@@ -275,8 +267,8 @@ def disp(uvo, uvc, so, mapdir):
 				cgdispOpts['in'] = '{0}.uncorrected.i.cm,{0}.uncorrected.v.cm'.format(src)
 				cgdispOpts['levs2'] = '-8,-7,-6,-5,-4,-3,-2,2,3,4,5,6,7,8'
 				miriad.cgdisp(cgdispOpts)
-				miriad.imstat({'in': '{}.i.cm'.format(src), 'region':'box\(3,3,50,125\)'})
-				miriad.imstat({'in': '{}.v.cm'.format(src), 'region':'box\(3,3,50,125\)'})
+				miriad.imstat({'in': '{}.i.cm'.format(src), 'region':'box(3,3,50,125)'})
+				miriad.imstat({'in': '{}.v.cm'.format(src), 'region':'box(3,3,50,125)'})
 				input("Press enter to continue...")
 
 				# v/i plot
@@ -293,8 +285,8 @@ def disp(uvo, uvc, so, mapdir):
 				cgdispOpts['in'] = '{0}.i.cm,{0}.v.cm'.format(src)
 				cgdispOpts['levs2'] = '-8,-7,-6,-5,-4,-3,-2,2,3,4,5,6,7,8'
 				miriad.cgdisp(cgdispOpts)
-				miriad.imstat({'in': '{}.i.cm'.format(src), 'region':'box\(3,3,50,125\)'})
-				miriad.imstat({'in': '{}.v.cm'.format(src), 'region':'box\(3,3,50,125\)'})
+				miriad.imstat({'in': '{}.i.cm'.format(src), 'region':'box(3,3,50,125)'})
+				miriad.imstat({'in': '{}.v.cm'.format(src), 'region':'box(3,3,50,125)'})
 				input("Press enter to continue...   ")
 
 				# v/i plot
@@ -312,13 +304,20 @@ def peak(so, mapdir):
 	miriad.maxfit({'in': '{}.i.cm'.format(src), 'log': 'maxfit_{}.stokesI'.format(so)})
 
 if __name__ == '__main__':
-	so = 'orkl_080106'
+	so = 'NGC7538S-s4'
 	uvo = 'UVDATA'
 	uvc = 'UVOffsetCorrect'
 	mapdir = 'MAPSCorrect'
-	rms = '0.0065'
 
-	# split(uvo, uvc, so)
-	# selfcal(so, uvc)
-	# mapvis(uvo, uvc, so, mapdir)
-	disp(uvo, uvc, so, mapdir)
+	lines = ['co3-2', 'ch2co17-16', 'cnt.usb', 'usb']
+	input("Press return to split")
+	split(uvo, uvc, so, lines)
+	input("Press return to selfcal")
+	selfcal(so, uvc, lines)
+	input("Press return to map visibilities")
+	mapvis(uvo, uvc, so, mapdir, lines)
+	input("Press return to save plots")
+	disp(uvo, uvc, so, mapdir,
+		lines=['co3-2', 'ch2co17-16', 'cnt'],
+		stokesVrms=[0.044, 0.0089, 0.0055]
+	)

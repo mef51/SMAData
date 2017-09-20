@@ -294,3 +294,7 @@ after all this processing.
 	* https://stackoverflow.com/questions/25521120/store-mouse-click-event-coordinates-with-matplotlib
 	* https://matplotlib.org/users/event_handling.html
 	* https://stackoverflow.com/questions/15721094/detecting-mouse-event-in-an-image-with-matplotlib
+
+19 Sept 2017
+------------
+* In NGC7538 CO stokes V got BIGGER after correction and ch2co17-16 disappeared.

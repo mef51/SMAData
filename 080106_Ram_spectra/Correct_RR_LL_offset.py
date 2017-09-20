@@ -14,7 +14,7 @@ def split(uvo, uvc, so):
 			miriad.uvaver({
 				'vis' : '{}/{}.{}'.format(uvo, so, lin),
 				'out' : '{}/{}.{}.{}'.format(uvc, so, lin, stk),
-				'select' : "'pol('{}')'".format(stk)
+				'select' : 'pol({})'.format(stk)
 			})
 
 		path = '{}/{}.usb.{}'.format(uvc, so, stk)
@@ -320,5 +320,5 @@ if __name__ == '__main__':
 
 	# split(uvo, uvc, so)
 	# selfcal(so, uvc)
-	# mapvis(uvo, uvc, so, mapdir)
-	disp(uvo, uvc, so, mapdir)
+	mapvis(uvo, uvc, so, mapdir)
+	# disp(uvo, uvc, so, mapdir)

@@ -12,21 +12,16 @@ def plotPhase(vis, device='2/xs'):
 		'nxy': '2,2'
 	})
 
-# vis = 'UVDATA/NGC7538S-s4.usb'
-vis = 'UVOffsetCorrect/NGC7538S-s4.usb.corrected.slfc'
-numChannels = miriad.getNumChannels(vis)
-velrange = miriad.getVelocityRange(vis)
+vis = 'UVDATA/HH211.usb'
 
 miriad.uvspec({
-	'vis': 'UVDATA/NGC7538S-s4.usb,UVOffsetCorrect/NGC7538S-s4.usb.corrected.slfc',
+	'vis': vis,
 	'device': '1/xs',
 	'interval': 9999,
 	'options': 'avall,nobase',
-	'nxy': '1,2',
-	'stokes': 'v',
-	'axis': 'freq,phase',
-	# 'yrange': '0,0.5',
-	'line': miriad.averageVelocityLine(vis, factor=20),
-
+	'nxy': '1,1',
+	'stokes': 'i',
+	'axis': 'freq,amp',
+	# 'line': miriad.averageVelocityLine(vis, factor=1),
 })
 

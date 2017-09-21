@@ -298,3 +298,11 @@ after all this processing.
 19 Sept 2017
 ------------
 * In NGC7538 CO stokes V got BIGGER after correction and ch2co17-16 disappeared.
+
+21 Sept 2017
+------------
+* Other sources to look at:
+	* HH211 (100111) (130121)
+	* L1448N
+	* IK Tau (101008)
+	* Mira (080627)

@@ -51,6 +51,7 @@ miriad.smauvspec({
 })
 
 input("Return to continue")
+miriad.showChannels('tmp.3', subtitle='SplitCont')
 miriad.uvlin({
 	'vis': 'tmp.3',
 	'out': '{}.{}'.format(vis, lab),

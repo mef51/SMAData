@@ -4,7 +4,7 @@ import shutil, glob, os
 import miriad
 
 
-so = 'NGC7538S-s4'
+so = 'iras2a.aver'
 dd = 'UVDATA'
 rms = 0.05
 rng = '0,0.7'

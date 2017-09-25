@@ -3,21 +3,15 @@
 import shutil, glob, os
 import miriad
 
-
-so = 'NGC7538S-s4'
+so = 'iras2a.aver'
 dd = 'UVDATA'
 
-molecules = ['CO', 'CH2CO']
+molecules = ['CO']
 for molecule in molecules:
 	if molecule == 'CO':
 		freq = 345.7959
 		lab = 'co3-2'
 		rms = 0.15
-		rng = '0,30'
-	elif molecule == 'CH2CO':
-		freq = 346.603
-		lab = 'ch2co17-16'
-		rms = 0.057
 		rng = '0,30'
 
 	vis = 'UVDATA/{}.{}'.format(so, lab)

@@ -3,25 +3,19 @@
 import shutil, glob, os
 import miriad
 
-so = 'NGC7538S-s4'
+so = 'iras2a.aver'
 dd = 'UVDATA'
 
-molecules = ['CO', 'CH2CO']
+molecules = ['CO']
 
 for molecule in molecules:
 	input('Splitting {}, press return to continue'.format(molecule))
 	if molecule == 'CO':
-		win = '3'
+		win = '4'
 		sb = 'usb'
 		freq = 345.7959
 		lab = 'co3-2'
-		free = '1,25,52,65'
-	elif molecule == 'CH2CO':
-		win = '12'
-		sb = 'usb'
-		freq = 346.603
-		lab = 'ch2co17-16'
-		free = '2,21,37,63'
+		free = '1,50,81,128'
 
 	vis = 'UVDATA/{}'.format(so)
 	path = '{}.{}'.format(vis, lab)
@@ -65,6 +59,7 @@ for molecule in molecules:
 
 	input("Return to continue")
 
+	miriad.showChannels('tmp.3', subtitle='SplitLines')
 	miriad.uvlin({
 		'vis': 'tmp.3',
 		'out': '{}.{}'.format(vis, lab),

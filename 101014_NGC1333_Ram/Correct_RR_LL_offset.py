@@ -304,12 +304,12 @@ def peak(so, mapdir):
 	miriad.maxfit({'in': '{}.i.cm'.format(src), 'log': 'maxfit_{}.stokesI'.format(so)})
 
 if __name__ == '__main__':
-	so = 'NGC7538S-s4'
+	so = 'iras2a.aver'
 	uvo = 'UVDATA'
 	uvc = 'UVOffsetCorrect'
 	mapdir = 'MAPSCorrect'
 
-	lines = ['co3-2', 'ch2co17-16', 'cnt.usb', 'usb']
+	lines = ['co3-2', 'cnt.usb', 'usb']
 	input("Press return to split")
 	split(uvo, uvc, so, lines)
 	input("Press return to selfcal")
@@ -318,6 +318,6 @@ if __name__ == '__main__':
 	mapvis(uvo, uvc, so, mapdir, lines)
 	input("Press return to save plots")
 	disp(uvo, uvc, so, mapdir,
-		lines=['co3-2', 'ch2co17-16', 'cnt'],
-		stokesVrms=[0.044, 0.0089, 0.0055]
+		lines=['co3-2', 'cnt'],
+		stokesVrms=[0.0060, 0.0019]
 	)

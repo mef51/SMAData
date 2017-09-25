@@ -7,7 +7,7 @@ import miriad
 Separate the continuum from molecular lines
 """
 
-so = 'NGC7538S-s4'
+so = 'iras2a.aver'
 dd = 'UVDATA'
 vis = '{}/{}'.format(dd, so)
 
@@ -17,7 +17,7 @@ ch = miriad.averageVelocityLine('{}.{}'.format(vis, sb), 5)
 
 freq = 345.8
 lab = 'cnt.usb'
-free = '6,107,275,478,500,725,762,815,833,1096,1109,1351,1366,1531'
+free = '6,434,465,1582,1590,2333,2336,6139'
 
 path = '{}.{}'.format(vis, lab)
 if os.path.exists(path): shutil.rmtree(path)
@@ -51,6 +51,7 @@ miriad.smauvspec({
 })
 
 input("Return to continue")
+miriad.showChannels('tmp.3', subtitle='SplitCont')
 miriad.uvlin({
 	'vis': 'tmp.3',
 	'out': '{}.{}'.format(vis, lab),

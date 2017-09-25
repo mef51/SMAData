@@ -65,6 +65,7 @@ for molecule in molecules:
 
 	input("Return to continue")
 
+	miriad.showChannels('tmp.3', subtitle='SplitLines')
 	miriad.uvlin({
 		'vis': 'tmp.3',
 		'out': '{}.{}'.format(vis, lab),

@@ -106,7 +106,7 @@ set visin=combined.usb.bp
 set stokesout=$so.stokes
 set chiout=$stokesout.chi
 
-\rm -fr stokesout
+\rm -fr $stokesout
 uvaver vis=$visin out=$stokesout select="so(${so})" interval=5
 \rm -fr $chiout
 uvredo vis=$stokesout options=chi out=$chiout
@@ -306,3 +306,7 @@ after all this processing.
 	* L1448N
 	* IK Tau (101008)
 	* Mira (080627)
+* HH211 has lines in both the upper sideband and lower sideband. However I can't look at stokes with the lower sideband because I get this error:
+	* Fatal Error [uvspec]:  Invalid number of polarisations for me to handle
+	* there's probably a simple solution like uvaver or uvsort
+		* see notes on july 12 and the GETSTOKES task

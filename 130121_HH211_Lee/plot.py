@@ -12,8 +12,8 @@ def plotPhase(vis, device='2/xs'):
 		'nxy': '2,2'
 	})
 
-vis = 'UVDATA/combined.usb.stokes'
-# vis = 'UVDATA/combined.lsb.stokes'
+# vis = 'UVDATA/combined.usb.stokes'
+vis = 'UVDATA/combined.lsb.stokes'
 
 miriad.uvspec({
 	'vis': vis,
@@ -21,9 +21,9 @@ miriad.uvspec({
 	'interval': 9999,
 	'options': 'avall,nobase',
 	'nxy': '1,1',
-	'stokes': 'i,v',
+	'stokes': 'v',
 	'axis': 'freq,amp',
-	# 'select': 'so(hh211)'
-	# 'line': miriad.averageVelocityLine(vis, factor=20),
+	# 'line': miriad.averageVelocityLine(vis, factor=1),
+	'line': miriad.averageLine(vis, factor=64)
 })
 

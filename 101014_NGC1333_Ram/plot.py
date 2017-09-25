@@ -2,28 +2,28 @@
 
 import miriad
 
-def plotPhase(vis, device='2/xs'):
-	miriad.smauvplt({
-		'vis': vis,
-		'device': device,
-		'interval': '1e3',
-		'stokes': 'i,v',
-		'axis': 'time,pha',
-		'nxy': '2,2'
-	})
+# Stokes V
+miriad.compareSpectra(
+	'UVDATA/iras2a.aver.usb',
+	'UVOffsetCorrect/iras2a.aver.usb.corrected.slfc',
+	combine=80,
+	options={'stokes': 'v'},
+	plotOptions={
+		'title': 'IRAS2a Stokes V: Uncorrected vs. Corrected',
+		'filename':'IRAS2aCompareV.pdf',
+		'figsize': (16/2,9/2),
+	}
+)
 
-vis = 'UVDATA/iras2a.aver.usb'
-
-miriad.uvspec({
-	'vis': vis,
-	'device': '1/xs',
-	'interval': 9999,
-	'options': 'avall,nobase',
-	'nxy': '1,1',
-	'stokes': 'i,v',
-	'axis': 'freq,amp',
-	# 'yrange': '0,0.5',
-	# 'line': miriad.averageVelocityLine(vis, factor=1),
-
-})
-
+# Stokes I
+miriad.compareSpectra(
+	'UVDATA/iras2a.aver.usb',
+	'UVOffsetCorrect/iras2a.aver.usb.corrected.slfc',
+	combine=1,
+	options={'stokes': 'i'},
+	plotOptions={
+		'title': 'IRAS2a Stokes I: Uncorrected vs. Corrected',
+		'filename':'IRAS2aCompareI.pdf',
+		'figsize': (16/2,9/2),
+	}
+)

@@ -310,3 +310,7 @@ after all this processing.
 	* Fatal Error [uvspec]:  Invalid number of polarisations for me to handle
 	* there's probably a simple solution like uvaver or uvsort
 		* see notes on july 12 and the GETSTOKES task
+
+2 Oct 2017
+----------
+* make plots three panels: stokes I, uncorrected V, corrected V

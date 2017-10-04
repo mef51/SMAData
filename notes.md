@@ -314,3 +314,15 @@ after all this processing.
 2 Oct 2017
 ----------
 * make plots three panels: stokes I, uncorrected V, corrected V
+
+4 Oct 2017
+----------
+* if miriad won't let you set axis=vel,amp then you can recompute the velocity information for a visibility following the steps in SplitLines:
+```csh
+uvputhd vis=tmp.1  out=tmp.2  hdvar=restfreq varval=$freq
+uvredo  vis=tmp.2  out=tmp.3  options=velocity
+```
+
+* minor ticks stuff:
+	* https://stackoverflow.com/questions/4896176/how-to-put-minorticks-on-both-the-sub-plots
+	* https://matplotlib.org/examples/pylab_examples/major_minor_demo1.html

@@ -51,4 +51,3 @@ for i, source in enumerate(sources):
 			'figsize': (16/2,9/2),
 		}
 	)
-	exit()

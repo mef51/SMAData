@@ -87,7 +87,7 @@ def selfcal(so, uvc, lines=[]):
 			'interval' : 5
 		})
 
-def mapvis(uvo, uvc, so, mapdir, lines=[]):
+def mapvis(uvo, uvc, so, mapdir, lines=[], lineSelection=[]):
 	"""
 	Make a map from visibilities
 	1. Continuum Stokes I,V Uncorrected & Corrected data
@@ -96,6 +96,8 @@ def mapvis(uvo, uvc, so, mapdir, lines=[]):
 	4. Continuum LL and RR independently, for non-selfcal and selfcal cases
 	"""
 	calibrator = 'cnt.usb'
+	if len(lines) != len(lineSelection):
+		lineSelection = [None for l in lines]
 
 	# 1.
 	src = '{}/{}.cnt'.format(mapdir, so)
@@ -141,14 +143,14 @@ def mapvis(uvo, uvc, so, mapdir, lines=[]):
 	lines.remove(calibrator)
 	lines.remove('usb')
 
-	for lin in lines:
+	for i, lin in enumerate(lines):
 		vis = '{}/{}.{}.corrected.slfc'.format(uvc, so, lin)
 		for src in ['{}/{}.{}'.format(mapdir, so, lin), '{}/{}.{}.uncorrected'.format(mapdir, so, lin)]:
 			line = miriad.averageVelocityLine(vis, 2)
 			for path in glob.glob('{}.*'.format(src)):
 				if os.path.exists(path): shutil.rmtree(path)
 
-			miriad.invert({
+			invertOptions = {
 				'vis': vis,
 				'stokes': 'i,v',
 				'beam': '{}.bm'.format(src),
@@ -157,8 +159,10 @@ def mapvis(uvo, uvc, so, mapdir, lines=[]):
 				'cell': 0.3,
 				'options': 'systemp,double,mfs',
 				'sup': 0,
-				#'line': vel
-			})
+			}
+			if lineSelection[i] is not None:
+				invertOptions['line'] = lineSelection[i]
+			miriad.invert(invertOptions)
 
 			for stk in ['i', 'v']:
 				miriad.clean({

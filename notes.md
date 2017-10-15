@@ -326,3 +326,20 @@ uvredo  vis=tmp.2  out=tmp.3  options=velocity
 * minor ticks stuff:
 	* https://stackoverflow.com/questions/4896176/how-to-put-minorticks-on-both-the-sub-plots
 	* https://matplotlib.org/examples/pylab_examples/major_minor_demo1.html
+
+14 Oct 2017
+-----------
+* I used the itemize task to look at the history of two maps: one that imspec gave me a spectrum of and the other that totally didn't.
+	* the reason imspec wouldn't give me a spectrum is because when I inverted I used the 'mfs' option which throws
+	away the frequency axis and makes just a single value. So if I want imspec to work I need to make a map with several values along the frequency axis. This is done by taking out the 'mfs' option and optionally you can use the `line` option in invert.
+	* Once you invert correctly you'll know because doing
+		`imspec in=some_map.cm device=1/xs`
+	will immediately give you a graph of flux vs. velocity.
+* To then get the spectrum of the peak you use the region keyword:
+	`imspect in=MAPS/orkl_080106.12co.v.cm device=1/xs region='abspixel,box(129,129,129,129)'`
+	* If you get coordinates using maxfit, make sure to use abspixel instead of relpixel in the region keyword
+* imspect looks nicer than imspec
+* If you want imspec to plot in frequency instead of velocity do
+	`velsw in=MAPSCorrect/NGC7538S-s4.co3-2.v.cm axis=FREQ`
+* I have I believe 9sigma detection at the peak of the single channel map!
+* Stokes I and Stokes V peaks, should they align or no? Why?

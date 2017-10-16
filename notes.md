@@ -343,3 +343,7 @@ uvredo  vis=tmp.2  out=tmp.3  options=velocity
 	`velsw in=MAPSCorrect/NGC7538S-s4.co3-2.v.cm axis=FREQ`
 * I have I believe 9sigma detection at the peak of the single channel map!
 * Stokes I and Stokes V peaks, should they align or no? Why?
+
+15 Oct 2017
+-----------
+* What is negative Stokes I?

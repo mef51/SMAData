@@ -304,18 +304,21 @@ def peak(so, mapdir):
 	miriad.maxfit({'in': '{}.i.cm'.format(src), 'log': 'maxfit_{}.stokesI'.format(so)})
 
 if __name__ == '__main__':
+	import miriad.squint as squint
 	so = 'iras2a.aver'
 	uvo = 'UVDATA'
 	uvc = 'UVOffsetCorrect'
 	mapdir = 'MAPSCorrect'
 
 	lines = ['co3-2', 'cnt.usb', 'usb']
-	input("Press return to split")
-	split(uvo, uvc, so, lines)
-	input("Press return to selfcal")
-	selfcal(so, uvc, lines)
+	# input("Press return to split")
+	# split(uvo, uvc, so, lines)
+	# input("Press return to selfcal")
+	# selfcal(so, uvc, lines)
 	input("Press return to map visibilities")
-	mapvis(uvo, uvc, so, mapdir, lines)
+	mapvis(uvo, uvc, so, mapdir, lines[:])
+	input("Press return to map visibilities with frequency axis")
+	squint.mapallvis(uvo, uvc, so, mapdir, lines[:])
 	input("Press return to save plots")
 	disp(uvo, uvc, so, mapdir,
 		lines=['co3-2', 'cnt'],

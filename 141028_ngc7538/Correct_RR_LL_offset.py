@@ -307,7 +307,7 @@ def disp(uvo, uvc, so, mapdir, lines=[], stokesVrms=[]):
 				'options': 'full,beambl,3val',
 				'csize': '0,1,0,0',
 				'cols1': 2, 'cols2': 8,
-				'levs1': '15,35,55,75,95',
+				'levs1': '-95,-75,-55,-35,-15,15,35,55,75,95',
 				'nxy': nxy,
 			}
 
@@ -365,12 +365,10 @@ if __name__ == '__main__':
 	# split(uvo, uvc, so, lines)
 	# input("Press return to selfcal")
 	# selfcal(so, uvc, lines)
-	print(lines)
 	input("Press return to map visibilities")
 	mapvis(uvo, uvc, so, mapdir, lines[:],
 		lineSelection=['chan,1,38', None, None, None]
 	)
-	print(lines)
 	input("Press return to map visibilities with frequency axis")
 	mapallvis(uvo, uvc, so, mapdir, lines[:])
 	input("Press return to save plots")

@@ -312,15 +312,17 @@ if __name__ == '__main__':
 
 	lines = ['co3-2', 'cnt.usb', 'usb']
 	# input("Press return to split")
-	# split(uvo, uvc, so, lines)
+	# squint.split(uvo, uvc, so, lines)
 	# input("Press return to selfcal")
-	# selfcal(so, uvc, lines)
-	input("Press return to map visibilities")
-	mapvis(uvo, uvc, so, mapdir, lines[:])
+	# squint.selfcal(so, uvc, lines)
+	# input("Press return to map visibilities")
+	# squint.mapvis(uvo, uvc, so, mapdir, lines[:])
 	input("Press return to map visibilities with frequency axis")
-	squint.mapallvis(uvo, uvc, so, mapdir, lines[:])
+	squint.mapallvis(uvo, uvc, so, mapdir, lines[:],
+		# lineSelection=[None, None, miriad.averageVelocityLine('UVOffsetCorrect/iras2a.aver.usb.corrected.slfc', 16)]
+	)
 	input("Press return to save plots")
-	disp(uvo, uvc, so, mapdir,
+	squint.disp(uvo, uvc, so, mapdir,
 		lines=['co3-2', 'cnt'],
 		stokesVrms=[0.0060, 0.0019]
 	)

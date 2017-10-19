@@ -281,7 +281,7 @@ after all this processing.
 
 14 Sept 2017
 ------------
-* CH2CO is at 346.6 GHz (https://arxiv.org/pdf/astro-ph/0702066.pdf) in NGC7538
+* CH2CO 17-->16 is at 346.6 GHz (https://arxiv.org/pdf/astro-ph/0702066.pdf) in NGC7538
 
 18 Sept 2017
 ------------

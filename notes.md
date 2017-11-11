@@ -347,3 +347,19 @@ uvredo  vis=tmp.2  out=tmp.3  options=velocity
 15 Oct 2017
 -----------
 * What is negative Stokes I?
+
+24 Oct 2017
+-----------
+* Just had my ACM: Sarah rightly said that the result of my paper largely depends on how the squint correction works. Maybe I'll start my report by writing/researching the explanation of selfcal.
+
+26 Oct 2017
+-----------
+* Sleuthing around the MIRIAD user manual and searching the entire codebase for keywords I found this in selfcal.for (line 1211, subroutine `phasol`):
+	"Solve for the phase corrections which minimise the error. This uses
+	a nonlinear Jacobi iteration, as suggested by Fred Schwab in "Adaptive
+	calibration of radio interferomter data", SPIE Vol. 231, 1980"
+
+6 Nov 2017
+----------
+* in the MAPSCorrect/ dir 'full' means full velocity info. No 'full' means the map was integrated into a single map.
+* does handdeddness change for the same molecule at different parts of the map?

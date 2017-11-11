@@ -7,7 +7,7 @@ if __name__ == '__main__':
 	so = 'irc+10216'
 	uvo = 'UVDATA'
 	uvc = 'UVOffsetCorrect'
-	mapdir = 'MAPScorrect'
+	mapdir = 'MAPSCorrect'
 
 	lines = ['cs7-6', 'sis19-18', 'h13cn4-3', 'co3-2', 'cnt.usb', 'usb']
 	# input("Press return to split")

@@ -5,9 +5,9 @@ import miriad
 
 folders = [
 	'IRC+10216',
-	'080106',
-	'141028_ngc7538',
-	'101014_NGC1333_Ram',
+	'OrionKL',
+	'NGC7538',
+	'NGC1333',
 ]
 
 sourceTitles = [
@@ -36,7 +36,7 @@ for i, source in enumerate(sources):
 	miriad.compareMapSpectra(
 		'../{}/MAPSCorrect/{}'.format(folder, uncorrectedMap),
 		'../{}/MAPSCorrect/{}'.format(folder, correctedMap),
-		'v',
+		['i','v'],
 		source,
 		plotOptions={
 			'subtitle': title,

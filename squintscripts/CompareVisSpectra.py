@@ -38,6 +38,11 @@ for i, source in enumerate(sources):
 	title = sourceTitles[i]
 	uncorrVisibility = uncorrVisibilities[i]
 	corrVisibility = corrVisibilities[i]
+
+	miriad.prthd({
+		'in': '../{}/UVOffsetCorrect/{}'.format(folder, corrVisibility)
+	})
+	continue
 	miriad.compareSpectra(
 		'../{}/UVDATA/{}'.format(folder, uncorrVisibility),
 		'../{}/UVOffsetCorrect/{}'.format(folder, corrVisibility),

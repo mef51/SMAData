@@ -363,3 +363,8 @@ uvredo  vis=tmp.2  out=tmp.3  options=velocity
 ----------
 * in the MAPSCorrect/ dir 'full' means full velocity info. No 'full' means the map was integrated into a single map.
 * does handdeddness change for the same molecule at different parts of the map?
+
+16 Nov 2017
+------------
+* The equations given in The Bible (thompson) make some assumptions about small polarization percentages. investigate whether the 10% signal we see means we need to use different equations or not. Miriad does the small polarization assumption. The higher the polarization percentage the more important the leakage is.
+* maxfit tells you the max pixel values but it also tells you the RA, Dec, and frequency that the pixel values correspond to

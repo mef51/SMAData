@@ -76,7 +76,10 @@ def compareSpectra(visUncorrected, visCorrected,
 		'ylim': stokesVylim[1],
 	})
 
-def compareMapSpectra(uncorrectedMap, correctedMap, line, stokes, source, plotOptions={}):
+def compareMapSpectra(uncorrectedMap, correctedMap, line, stokes, source, peakStokes='v', regionWidth=1,
+	legendloc=1,
+	plotOptions={},
+	imspectOptions={}):
 	"""
 	maxfit options=abs on the corrected/uncorrected maps for each line
 	reinvert the visibilities without the 'mfs' to preserve the velocity axis
@@ -93,16 +96,32 @@ def compareMapSpectra(uncorrectedMap, correctedMap, line, stokes, source, plotOp
 	line: string of line (ex 'co3-2') to find the peak of
 	stokes: string, one of 'i', 'q', 'u', 'v', 'rr', 'rl', 'lr', 'll'
 	source: string
+	regionWidth: the width of the box to put around the peak when creating spectra
+	peakStokes: string of one of the polarizations to take the spectra through the peak of.
+		ex. 'i' means take the spectra through the peak of Stokes I
 	"""
 
-	# find the peak of Stokes V in the corrected line map
-	vlinemap = (correctedMap + '.v.full.cm').replace('usb', line)
-	maxPixel = miriad.maxfit({'in': vlinemap, 'options': 'abs'}, stdout=subprocess.PIPE).stdout
-	maxPixel = str(maxPixel).split('\\n')[4]
-	maxPixel = maxPixel[maxPixel.find('(')+1:maxPixel.find(')')].split(',')[0:2]
-	maxPixel = list(map(int, maxPixel))
+	# find the peak of Stokes I or V in the corrected line map
+	peakLineMap = (correctedMap + '.' + peakStokes + '.full.cm').replace('usb', line)
+	try:
+		maxPixel = miriad.maxfit({'in': peakLineMap, 'options': 'abs'}, stdout=subprocess.PIPE).stdout
+		maxPixel = str(maxPixel).split('\\n')[4]
+		maxPixel = maxPixel[maxPixel.find('(')+1:maxPixel.find(')')].split(',')[0:2]
+		maxPixel = list(map(int, maxPixel))
+	except:
+		maxPixel = [64, 64]
+
+	# make a box around the peak (by finding a bottom left corner 'blc' and top right corner 'trc')
+	blc = (maxPixel[0] - regionWidth/2, maxPixel[1] - regionWidth/2)
+	blc = tuple(map(int, blc))
+	trc = (maxPixel[0] + regionWidth/2, maxPixel[1] + regionWidth/2)
+	trc = tuple(map(int, trc))
+	region = 'abspixel,box({},{},{},{})'.format(blc[0], blc[1], trc[0], trc[1])
+	# region = 'abspixel,box({0},{1},{0},{1})'.format(maxPixel[0], maxPixel[1])
 
 	corrText = ['uncorr', 'corr']
+	frequencies = []
+	amplitudes = []
 	for i, mapdir in enumerate([uncorrectedMap, correctedMap]):
 		for stk in stokes:
 			mapsuffix = '.{}.full.cm'.format(stk)
@@ -110,9 +129,46 @@ def compareMapSpectra(uncorrectedMap, correctedMap, line, stokes, source, plotOp
 
 			miriad.velsw({'in': mappath, 'axis': 'FREQ'})
 
-			# plot i and v through the point where v peaks in the line map
-			miriad.imspect({
+			# get i and v spectra through the point where v peaks in the line map
+			imspectDefaults = {
 				'in': mappath,
-				'region': 'abspixel,box({0},{1},{0},{1})'.format(maxPixel[0], maxPixel[1]),
+				'region': region,
 				'device': 'newfigures/{}.{}peak.{}.{}.ps/cps'.format(source, line, corrText[i], stk)
-			})
+			}
+			x, y, _ = miriad.dumpImspect(mappath, options={**imspectDefaults, **imspectOptions})
+			frequencies.append(x)
+			amplitudes.append(y)
+
+	fontsize = 10
+	plotDefaults = {
+		0: {'x': frequencies[0], 'y': amplitudes[0], 'draw': 'steps-mid', 'line': 'r-',
+			'label': 'Uncorrected Stokes I'
+		},
+		'legend': {'loc': legendloc, 'fontsize': fontsize},
+		'title': '',
+		'xlabel': 'Frequency (GHz)', 'ylabel': 'Average Intensity (Jy/beam)',
+		'sharex': True, 'sharey': 'row',
+		'hspace': 0.0,
+		'minorticks': True,
+	}
+
+	plotOptions['subtitle'] = plotOptions['subtitle'] + ': Peak of Stokes {} through {} line'.format(
+		peakStokes.upper(), line.upper()
+	)
+
+	fig = plawt.plot({**plotDefaults, **plotOptions}, {
+		0: {'x': frequencies[1], 'y': amplitudes[1], 'draw': 'steps-mid', 'line': 'm-',
+			'label': 'Uncorrected Stokes V'
+		},
+		'legend': {'loc': legendloc, 'fontsize': fontsize},
+	}, {
+		0: {'x': frequencies[2], 'y': amplitudes[2], 'draw': 'steps-mid', 'line': 'r-',
+			'label': 'Corrected Stokes I'
+		},
+		'legend': {'loc': legendloc, 'fontsize': fontsize},
+	}, {
+		0: {'x': frequencies[3], 'y': amplitudes[3], 'draw': 'steps-mid', 'line': 'm-',
+			'label': 'Corrected Stokes V'
+		},
+		'legend': {'loc': legendloc, 'fontsize': fontsize},
+	})

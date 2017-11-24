@@ -368,3 +368,12 @@ uvredo  vis=tmp.2  out=tmp.3  options=velocity
 ------------
 * The equations given in The Bible (thompson) make some assumptions about small polarization percentages. investigate whether the 10% signal we see means we need to use different equations or not. Miriad does the small polarization assumption. The higher the polarization percentage the more important the leakage is.
 * maxfit tells you the max pixel values but it also tells you the RA, Dec, and frequency that the pixel values correspond to
+
+21 Nov 2017
+-----------
+* I think I use the same beam for both stokes i and stokes v to invert the visibilities. INVESTIGATE
+* even though the visibilities are the same for stokes I pre and post correction we get different stokes I in the inverted map... why?
+
+24 Nov 2017
+-----------
+* hokay so Martin told me that even though the amplitude for stokes I isn't changing in visibility space the phase could be changing, which is why you get different stokes I maps after inverting.

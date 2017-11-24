@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import shutil, glob, os
-import miriad
+import paperplots
 
 folders = [
 	'IRC+10216',
@@ -26,6 +26,7 @@ sources = [
 
 correctedMaps = ['{}.usb'.format(source) for source in sources]
 uncorrectedMaps = ['{}.usb.uncorrected'.format(source) for source in sources]
+line = 'co3-2'
 
 for i, source in enumerate(sources):
 	print(source)
@@ -33,10 +34,11 @@ for i, source in enumerate(sources):
 	title = sourceTitles[i]
 	correctedMap = correctedMaps[i]
 	uncorrectedMap = uncorrectedMaps[i]
-	miriad.compareMapSpectra(
+	paperplots.compareMapSpectra(
 		'../{}/MAPSCorrect/{}'.format(folder, uncorrectedMap),
 		'../{}/MAPSCorrect/{}'.format(folder, correctedMap),
-		['i','v'],
+		line,
+		['i', 'v'],
 		source,
 		plotOptions={
 			'subtitle': title,
@@ -44,3 +46,17 @@ for i, source in enumerate(sources):
 			'figsize': (16/2,9/2),
 		}
 	)
+
+exit()
+paperplots.compareMapSpectra(
+	'../{}/MAPSCorrect/{}'.format(folder, uncorrectedMap),
+	'../{}/MAPSCorrect/{}'.format(folder, correctedMap),
+	line,
+	['i', 'v'],
+	source,
+	plotOptions={
+		'subtitle': title,
+		'filename':'{}.map.pdf'.format(title),
+		'figsize': (16/2,9/2),
+	}
+)

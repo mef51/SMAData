@@ -2,6 +2,7 @@
 
 import shutil, glob, os
 import miriad
+import paperplots
 
 folders = [
 	'IRC+10216',
@@ -43,7 +44,7 @@ for i, source in enumerate(sources):
 		'in': '../{}/UVOffsetCorrect/{}'.format(folder, corrVisibility)
 	})
 	continue
-	miriad.compareSpectra(
+	paperplots.compareSpectra(
 		'../{}/UVDATA/{}'.format(folder, uncorrVisibility),
 		'../{}/UVOffsetCorrect/{}'.format(folder, corrVisibility),
 		combineV=channelsToMerge[i],

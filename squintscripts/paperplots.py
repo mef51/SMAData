@@ -102,42 +102,7 @@ def compareMapSpectra(uncorrectedMap, correctedMap, line, stokes, source, peakSt
 	"""
 
 	# find the peak of Stokes I or V in the corrected line map
-	peakLineMap = (correctedMap + '.' + peakStokes + '.full.cm').replace('usb', line)
-	try:
-		maxPixel = miriad.maxfit({'in': peakLineMap, 'options': 'abs'}, stdout=subprocess.PIPE).stdout
-		maxPixel = str(maxPixel).split('\\n')[4]
-		maxPixel = maxPixel[maxPixel.find('(')+1:maxPixel.find(')')].split(',')[0:2]
-		maxPixel = list(map(int, maxPixel))
-	except:
-		maxPixel = [64, 64]
-
-	# make a box around the peak (by finding a bottom left corner 'blc' and top right corner 'trc')
-	blc = (maxPixel[0] - regionWidth/2, maxPixel[1] - regionWidth/2)
-	blc = tuple(map(int, blc))
-	trc = (maxPixel[0] + regionWidth/2, maxPixel[1] + regionWidth/2)
-	trc = tuple(map(int, trc))
-	region = 'abspixel,box({},{},{},{})'.format(blc[0], blc[1], trc[0], trc[1])
-	# region = 'abspixel,box({0},{1},{0},{1})'.format(maxPixel[0], maxPixel[1])
-
-	corrText = ['uncorr', 'corr']
-	frequencies = []
-	amplitudes = []
-	for i, mapdir in enumerate([uncorrectedMap, correctedMap]):
-		for stk in stokes:
-			mapsuffix = '.{}.full.cm'.format(stk)
-			mappath = mapdir + mapsuffix
-
-			miriad.velsw({'in': mappath, 'axis': 'FREQ'})
-
-			# get i and v spectra through the point where v peaks in the line map
-			imspectDefaults = {
-				'in': mappath,
-				'region': region,
-				'device': 'newfigures/{}.{}peak.{}.{}.ps/cps'.format(source, line, corrText[i], stk)
-			}
-			x, y, _ = miriad.dumpImspect(mappath, options={**imspectDefaults, **imspectOptions})
-			frequencies.append(x)
-			amplitudes.append(y)
+	frequencies, amplitudes = getMapData(uncorrectedMap, correctedMap, line, stokes, peakStokes, regionWidth, imspectOptions)
 
 	legendFontSize = 12
 	tickParams = {'axis': 'both', 'which': 'both', 'direction': 'in', 'right': True, 'top': True, 'labelsize': 10}
@@ -182,3 +147,49 @@ def compareMapSpectra(uncorrectedMap, correctedMap, line, stokes, source, peakSt
 		'legend': {'loc': legendloc, 'fontsize': legendFontSize},
 		'tick_params': tickParams
 	})
+
+def getMapData(uncorrectedMap, correctedMap, line, stokes, peakStokes, regionWidth=1, imspectOptions={}):
+	"""
+	Returns two numpy arrays representing the spectra: frequencies, amplitudes
+
+	ex:
+	`freq, amps = getMapData('/path/to/uncorrected/map', '/path/to/corrected/map', 'co3-2', ['i', 'v'], 'v', regionWidth=1)`
+
+	"""
+	peakLineMap = (correctedMap + '.' + peakStokes + '.full.cm').replace('usb', line)
+	try:
+		maxPixel = miriad.maxfit({'in': peakLineMap, 'options': 'abs'}, stdout=subprocess.PIPE).stdout
+		maxPixel = str(maxPixel).split('\\n')[4]
+		maxPixel = maxPixel[maxPixel.find('(')+1:maxPixel.find(')')].split(',')[0:2]
+		maxPixel = list(map(int, maxPixel))
+	except:
+		maxPixel = [64, 64]
+
+	# make a box around the peak (by finding a bottom left corner 'blc' and top right corner 'trc')
+	blc = (maxPixel[0] - regionWidth/2, maxPixel[1] - regionWidth/2)
+	blc = tuple(map(int, blc))
+	trc = (maxPixel[0] + regionWidth/2, maxPixel[1] + regionWidth/2)
+	trc = tuple(map(int, trc))
+	region = 'abspixel,box({},{},{},{})'.format(blc[0], blc[1], trc[0], trc[1])
+	# region = 'abspixel,box({0},{1},{0},{1})'.format(maxPixel[0], maxPixel[1])
+
+	corrText = ['uncorr', 'corr']
+	frequencies = []
+	amplitudes = []
+	for i, mapdir in enumerate([uncorrectedMap, correctedMap]):
+		for stk in stokes:
+			mapsuffix = '.{}.full.cm'.format(stk)
+			mappath = mapdir + mapsuffix
+
+			miriad.velsw({'in': mappath, 'axis': 'FREQ'})
+
+			# get i and v spectra through the point where v peaks in the line map
+			imspectDefaults = {
+				'in': mappath,
+				'region': region,
+			}
+			x, y, _ = miriad.dumpImspect(mappath, options={**imspectDefaults, **imspectOptions})
+			frequencies.append(x)
+			amplitudes.append(y)
+
+	return frequencies, amplitudes

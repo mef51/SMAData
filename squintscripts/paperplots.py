@@ -139,36 +139,46 @@ def compareMapSpectra(uncorrectedMap, correctedMap, line, stokes, source, peakSt
 			frequencies.append(x)
 			amplitudes.append(y)
 
-	fontsize = 10
+	legendFontSize = 12
+	tickParams = {'axis': 'both', 'which': 'both', 'direction': 'in', 'right': True, 'top': True, 'labelsize': 10}
+	axisLabelSize = 14
 	plotDefaults = {
 		0: {'x': frequencies[0], 'y': amplitudes[0], 'draw': 'steps-mid', 'line': 'r-',
 			'label': 'Uncorrected Stokes I'
 		},
-		'legend': {'loc': legendloc, 'fontsize': fontsize},
-		'title': '',
+		'nrows': 2, 'ncols': 2,
+		'legend': {'loc': legendloc, 'fontsize': legendFontSize},
 		'xlabel': 'Frequency (GHz)', 'ylabel': 'Average Intensity (Jy/beam)',
+		'xlabelsize': axisLabelSize, 'ylabelsize': axisLabelSize,
 		'sharex': True, 'sharey': 'row',
-		'hspace': 0.0,
 		'minorticks': True,
+		'tight_layout': {'pad': 3, 'h_pad': 2.0, 'w_pad': 0},
+		'tick_params': tickParams,
+		'titlesize': 18
 	}
 
-	plotOptions['subtitle'] = plotOptions['subtitle'] + ': Peak of Stokes {} through {} line'.format(
+	plotOptions['title'] = plotOptions['title'] + ': Peak of Stokes {} through {} line'.format(
 		peakStokes.upper(), line.upper()
 	)
 
+	plotOptions['subloc'] = 'left'
+
 	fig = plawt.plot({**plotDefaults, **plotOptions}, {
-		0: {'x': frequencies[1], 'y': amplitudes[1], 'draw': 'steps-mid', 'line': 'm-',
-			'label': 'Uncorrected Stokes V'
-		},
-		'legend': {'loc': legendloc, 'fontsize': fontsize},
-	}, {
 		0: {'x': frequencies[2], 'y': amplitudes[2], 'draw': 'steps-mid', 'line': 'r-',
 			'label': 'Corrected Stokes I'
 		},
-		'legend': {'loc': legendloc, 'fontsize': fontsize},
+		'legend': {'loc': legendloc, 'fontsize': legendFontSize},
+		'tick_params': tickParams
+	}, {
+		0: {'x': frequencies[1], 'y': amplitudes[1], 'draw': 'steps-mid', 'line': 'm-',
+			'label': 'Uncorrected Stokes V'
+		},
+		'legend': {'loc': legendloc, 'fontsize': legendFontSize},
+		'tick_params': tickParams
 	}, {
 		0: {'x': frequencies[3], 'y': amplitudes[3], 'draw': 'steps-mid', 'line': 'm-',
 			'label': 'Corrected Stokes V'
 		},
-		'legend': {'loc': legendloc, 'fontsize': fontsize},
+		'legend': {'loc': legendloc, 'fontsize': legendFontSize},
+		'tick_params': tickParams
 	})

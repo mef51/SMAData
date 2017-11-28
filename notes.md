@@ -377,3 +377,7 @@ uvredo  vis=tmp.2  out=tmp.3  options=velocity
 24 Nov 2017
 -----------
 * hokay so Martin told me that even though the amplitude for stokes I isn't changing in visibility space the phase could be changing, which is why you get different stokes I maps after inverting.
+
+27 Nov 2017
+-----------
+* what is this glorious handbook: https://jakevdp.github.io/PythonDataScienceHandbook

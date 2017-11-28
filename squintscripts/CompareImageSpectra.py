@@ -27,7 +27,7 @@ sources = [
 correctedMaps = ['{}.usb'.format(source) for source in sources]
 uncorrectedMaps = ['{}.usb.uncorrected'.format(source) for source in sources]
 line = 'co3-2'
-figsize = (8.5,11)
+figsize = (11,8.5)
 
 peakStokes = 'v'
 for peakStokes in ['i', 'v']:
@@ -48,7 +48,7 @@ for peakStokes in ['i', 'v']:
 		regionWidth=1,
 		legendloc=2,
 		plotOptions={
-			'subtitle': title,
+			'title': title,
 			'filename':'{}.map.spec.{}peak{}.pdf'.format(title, line, peakStokes),
 			'figsize': figsize,
 		}
@@ -71,7 +71,7 @@ for peakStokes in ['i', 'v']:
 		regionWidth=1,
 		legendloc=2 if peakStokes is 'i' else 1,
 		plotOptions={
-			'subtitle': title,
+			'title': title,
 			'filename':'{}.map.spec.{}peak{}.pdf'.format(title, line, peakStokes),
 			'figsize': figsize,
 		}
@@ -93,7 +93,7 @@ for peakStokes in ['i', 'v']:
 		peakStokes=peakStokes,
 		regionWidth=5,
 		plotOptions={
-			'subtitle': title,
+			'title': title,
 			'filename':'{}.map.spec.{}peak{}.pdf'.format(title, line, peakStokes),
 			'figsize': figsize,
 		},
@@ -119,7 +119,7 @@ for peakStokes in ['i', 'v']:
 		regionWidth=1,
 		legendloc=4 if peakStokes is 'v' else 1,
 		plotOptions={
-			'subtitle': title,
+			'title': title,
 			'filename':'{}.map.spec.{}peak{}.pdf'.format(title, line, peakStokes),
 			'figsize': figsize,
 		}
@@ -140,7 +140,7 @@ for peakStokes in ['i', 'v']:
 # 		regionWidth=5,
 #		peakStokes=peakStokes,
 # 		plotOptions={
-# 			'subtitle': title,
+# 			'title': title,
 # 			'filename':'{}.map.spec.{}peak{}.pdf'.format(title, line, peakStokes),
 # 			'figsize': figsize,
 # 		}

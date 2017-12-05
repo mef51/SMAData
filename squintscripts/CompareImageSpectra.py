@@ -24,11 +24,29 @@ sources = [
 	'iras2a.aver'
 ]
 
-correctedMaps = ['{}.usb'.format(source) for source in sources]
 uncorrectedMaps = ['{}.usb.uncorrected'.format(source) for source in sources]
+correctedMaps = ['{}.usb'.format(source) for source in sources]
 line = 'co3-2'
-figsize = (11,8.5)
+figsize = (8.5, 11)
 
+imspectOptions = [{}, {}, {'hann': 15}, {}]
+for peakStokes in ['v']:
+	paperplots.plotAllSources(
+		['../{}/MAPSCorrect/{}'.format(folders[i], umap) for i, umap in enumerate(uncorrectedMaps)],
+		['../{}/MAPSCorrect/{}'.format(folders[i], cmap) for i, cmap in enumerate(correctedMaps)],
+		sources,
+		peakStokes=peakStokes,
+		plotOptions={
+			'title': 'All the data in peak Stokes {}'.format(peakStokes.upper()),
+			'show': True,
+			# 'filename':'{}.map.spec.{}peak{}.pdf'.format(title, line, peakStokes),
+			'figsize': figsize,
+		},
+		imspectOptions=imspectOptions
+	)
+exit()
+
+figsize = (11,8.5)
 peakStokes = 'v'
 for peakStokes in ['i', 'v']:
 	# IRC+10216

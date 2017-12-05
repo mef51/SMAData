@@ -148,12 +148,74 @@ def compareMapSpectra(uncorrectedMap, correctedMap, line, stokes, source, peakSt
 		'tick_params': tickParams
 	})
 
+def plotAllSources(uncorrectedMaps, correctedMaps, sources, peakStokes='v', regionWidths=[], plotOptions={}, imspectOptions=[]):
+	"""
+	Plot all spectra for all sources in one figure
+
+	locked to 'co3-2' line and peak stokes v
+	"""
+
+	# init defaults
+	if len(regionWidths) != len(sources):
+		regionWidths = [1 for s in sources]
+	if len(imspectOptions) != len(sources):
+		imspectOptions = [{} for s in sources]
+
+	# gather data for all sources
+	tickParams = {'axis': 'both', 'which': 'both', 'direction': 'in', 'right': True, 'top': True, 'labelsize': 10}
+	plotDefaults = {
+		'nrows': 8, 'ncols': 2,
+		'sharex': 'none', 'sharey': 'row',
+		'xlabel': 'Frequency (GHz)', 'ylabel': 'Intensity (Jy/Beam)',
+		'minorticks': True,
+		'tight_layout': {'pad': 3, 'h_pad': 2.0, 'w_pad': 0},
+	}
+	sourcePlots = []
+
+	for i, source in enumerate(sources):
+		uncMap = uncorrectedMaps[i]
+		cMap   = correctedMaps[i]
+		freqs, amps = getMapData(uncMap, cMap, 'co3-2', ['i', 'v'], peakStokes, regionWidths[i], imspectOptions=imspectOptions[i])
+		# data[source] = {'freqs': freqs, 'amps': amps}
+
+		newPanels = []
+		for j, freq in enumerate(freqs):
+			newPanel = plotDefaults if i == 0 and j == 0 else {}
+			if i == 0:
+				if j == 0:
+					newPanel['subtitle'] = 'Uncorrected Spectra'
+				elif j == 2:
+					newPanel['subtitle'] = 'Corrected Spectra'
+
+			linestyle = 'r-' if j is 0 or j is 2 else 'm-'
+
+			newPanel[0] = {'x': freqs[j], 'y': amps[j], 'label': source, 'draw': 'steps-mid', 'line': linestyle}
+			newPanel = {**newPanel, **{
+				'legend': {'loc': 1, 'fontsize': 8},
+				# 'ylabel': source,
+				'tick_params': tickParams,
+			}}
+			newPanels.append(newPanel)
+
+		sourcePlots.append(newPanels[0])
+		sourcePlots.append(newPanels[2])
+		sourcePlots.append(newPanels[1])
+		sourcePlots.append(newPanels[3])
+
+	sourcePlots = [{**sourcePlots[0], **plotOptions}] + sourcePlots[1:]
+	fig = plawt.plot(*sourcePlots)
+
 def getMapData(uncorrectedMap, correctedMap, line, stokes, peakStokes, regionWidth=1, imspectOptions={}):
 	"""
-	Returns two numpy arrays representing the spectra: frequencies, amplitudes
+	Returns two numpy arrays representing the uncorrected and corrected spectra for each given stokes
+	these arrays in turn are of length 2*len(stokes).
 
 	ex:
-	`freq, amps = getMapData('/path/to/uncorrected/map', '/path/to/corrected/map', 'co3-2', ['i', 'v'], 'v', regionWidth=1)`
+	```
+	freqs, amps = getMapData('/path/to/uncorrected/map', '/path/to/corrected/map', 'co3-2', ['i', 'v'], 'v', regionWidth=1)
+	# freqs[0], amps[0] is the frequency vs. amplitude for the uncorrected map of stokes i through the max peak of stokes i
+	# since getMapData was called with stokes = ['i', 'v'] len(freqs) = 4 and len(amps) = 4
+	```
 
 	"""
 	peakLineMap = (correctedMap + '.' + peakStokes + '.full.cm').replace('usb', line)

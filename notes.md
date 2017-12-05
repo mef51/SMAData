@@ -381,3 +381,7 @@ uvredo  vis=tmp.2  out=tmp.3  options=velocity
 27 Nov 2017
 -----------
 * what is this glorious handbook: https://jakevdp.github.io/PythonDataScienceHandbook
+
+1 Dec 2017
+-----------
+* God bless stack overflow: https://stackoverflow.com/questions/34933905/matplotlib-adding-subplots-to-a-subplot

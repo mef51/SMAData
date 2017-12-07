@@ -27,6 +27,24 @@ RMSes = [
 	0.00597,
 ]
 
+# Get orion continuum maps
+cgdispOptions = {
+	'in': '../{0}/MAPSCorrect/{1}.cnt.uncorrected.i.cm,../{0}/MAPSCorrect/{1}.cnt.uncorrected.v.cm'.format(folders[1], sources[1]),
+	'labtyp': 'arcsec,arcsec',
+	'type': 'cont,cont',
+	'slev': 'p,1,a,{}'.format(0.05),
+	'levs1': '15,50,95',
+	'levs2': '-8,-7,-6,-5,-4,-3,-2,2,3,4,5,6,7,8',
+	'cols1': 2, 'cols2': 4,
+	'device': 'orkl.cnt.uncorr.ps/cps'
+}
+miriad.cgdisp(cgdispOptions)
+cgdispOptions['in'] = '../{0}/MAPSCorrect/{1}.cnt.i.cm,../{0}/MAPSCorrect/{1}.cnt.v.cm'.format(folders[1], sources[1])
+cgdispOptions['device'] = 'orkl.cnt.corr.ps/cps'
+cgdispOptions['slev'] = 'p,1,a,{}'.format(0.03)
+miriad.cgdisp(cgdispOptions)
+exit()
+
 for folder, source, rms in zip(folders, sources, RMSes):
 	miriad.cgdisp({
 		'in': '../{0}/MAPSCorrect/{1}.co3-2.i.cm,../{0}/MAPSCorrect/{1}.co3-2.v.cm'.format(folder, source),

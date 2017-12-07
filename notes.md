@@ -385,3 +385,7 @@ uvredo  vis=tmp.2  out=tmp.3  options=velocity
 1 Dec 2017
 -----------
 * God bless stack overflow: https://stackoverflow.com/questions/34933905/matplotlib-adding-subplots-to-a-subplot
+
+6 Dec 2017
+----------
+* if I put my code online it won't work because people won't have the same directory structure as me. But I can just dump my directory to a monster file (using tree for example) and if anyone cares they can look at it to recreate the directory structure

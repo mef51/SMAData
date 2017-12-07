@@ -161,6 +161,8 @@ def plotAllSources(uncorrectedMaps, correctedMaps, sources, peakStokes='v', regi
 	if len(imspectOptions) != len(sources):
 		imspectOptions = [{} for s in sources]
 
+	sourceTitles = ['Orion KL', 'NGC7538', 'IRC+10216', 'IRAS2a']
+
 	# gather data for all sources
 	tickParams = {'axis': 'both', 'which': 'both', 'direction': 'in', 'right': True, 'top': True, 'labelsize': 10}
 	plotDefaults = {
@@ -169,9 +171,13 @@ def plotAllSources(uncorrectedMaps, correctedMaps, sources, peakStokes='v', regi
 		'xlabel': 'Frequency (GHz)', 'ylabel': 'Intensity (Jy/Beam)',
 		'minorticks': True,
 		'tight_layout': {'pad': 3, 'h_pad': 2.0, 'w_pad': 0},
+		'left': 0.11, 'top': 0.92,
+		'wspace': 0.05,
+		'xlabelsize': 12, 'ylabelsize': 12,
 	}
 	sourcePlots = []
 
+	legendlocs = [1, 1, 2, 3]
 	for i, source in enumerate(sources):
 		uncMap = uncorrectedMaps[i]
 		cMap   = correctedMaps[i]
@@ -199,10 +205,9 @@ def plotAllSources(uncorrectedMaps, correctedMaps, sources, peakStokes='v', regi
 				amps[j] = amps[j][:idx]
 				freqs[j] = freqs[j][:idx]
 
-			newPanel[0] = {'x': freqs[j], 'y': amps[j], 'label': source, 'draw': 'steps-mid', 'line': linestyle}
+			newPanel[0] = {'x': freqs[j], 'y': amps[j], 'label': sourceTitles[i], 'draw': 'steps-mid', 'line': linestyle}
 			newPanel = {**newPanel, **{
-				'legend': {'loc': 1, 'fontsize': 8},
-				# 'ylabel': source,
+				'legend': {'loc': legendlocs[i], 'fontsize': 10},
 				'tick_params': tickParams,
 			}}
 			newPanels.append(newPanel)
@@ -241,12 +246,27 @@ def getMapData(uncorrectedMap, correctedMap, line, stokes, peakStokes, regionWid
 	trc = (maxPixel[0] + regionWidth/2, maxPixel[1] + regionWidth/2)
 	trc = tuple(map(int, trc))
 	region = 'abspixel,box({},{},{},{})'.format(blc[0], blc[1], trc[0], trc[1])
-	# region = 'abspixel,box({0},{1},{0},{1})'.format(maxPixel[0], maxPixel[1])
 
 	corrText = ['uncorr', 'corr']
 	frequencies = []
 	amplitudes = []
 	for i, mapdir in enumerate([uncorrectedMap, correctedMap]):
+		peakLineMap = (mapdir + '.' + peakStokes + '.cm').replace('usb', line)
+		try:
+			maxPixel = miriad.maxfit({'in': peakLineMap}, stdout=subprocess.PIPE).stdout
+			maxPixel = str(maxPixel).split('\\n')[4]
+			maxPixel = maxPixel[maxPixel.find('(')+1:maxPixel.find(')')].split(',')[0:2]
+			maxPixel = list(map(int, maxPixel))
+		except:
+			maxPixel = [64, 64]
+
+		# make a box around the peak (by finding a bottom left corner 'blc' and top right corner 'trc')
+		blc = (maxPixel[0] - regionWidth/2, maxPixel[1] - regionWidth/2)
+		blc = tuple(map(int, blc))
+		trc = (maxPixel[0] + regionWidth/2, maxPixel[1] + regionWidth/2)
+		trc = tuple(map(int, trc))
+		region = 'abspixel,box({},{},{},{})'.format(blc[0], blc[1], trc[0], trc[1])
+
 		for stk in stokes:
 			mapsuffix = '.{}.full.cm'.format(stk)
 			mappath = mapdir + mapsuffix

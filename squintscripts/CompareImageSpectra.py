@@ -4,23 +4,23 @@ import shutil, glob, os
 import paperplots
 
 folders = [
-	'IRC+10216',
 	'OrionKL',
 	'NGC7538',
+	'IRC+10216',
 	'NGC1333',
 ]
 
 sourceTitles = [
-	'IRC+10216',
 	'Orion KL',
 	'NGC7538',
+	'IRC+10216',
 	'IRAS2a'
 ]
 
 sources = [
-	'irc+10216',
 	'orkl_080106',
 	'NGC7538S-s4',
+	'irc+10216',
 	'iras2a.aver'
 ]
 
@@ -37,9 +37,9 @@ for peakStokes in ['v']:
 		sources,
 		peakStokes=peakStokes,
 		plotOptions={
-			'title': 'The effect of squint correction on Stokes V Map Spectra'.format(peakStokes.upper()),
+			'title': 'Stokes V Map Spectra before and after squint correction'.format(peakStokes.upper()),
 			'show': True,
-			# 'filename':'all.map.spec.{}peak{}.pdf'.format(line, peakStokes),
+			'filename':'stokesv.map.spec.{}peak{}.pdf'.format(line, peakStokes),
 			'figsize': figsize,
 		},
 		imspectOptions=imspectOptions

@@ -29,7 +29,7 @@ correctedMaps = ['{}.usb'.format(source) for source in sources]
 line = 'co3-2'
 figsize = (8.5, 11)
 
-imspectOptions = [{}, {}, {'hann': 15}, {}]
+imspectOptions = [{}, {}, {'hann':1}, {}]
 for peakStokes in ['v']:
 	paperplots.plotAllSources(
 		['../{}/MAPSCorrect/{}'.format(folders[i], umap) for i, umap in enumerate(uncorrectedMaps)],
@@ -37,9 +37,9 @@ for peakStokes in ['v']:
 		sources,
 		peakStokes=peakStokes,
 		plotOptions={
-			'title': 'All the data in peak Stokes {}'.format(peakStokes.upper()),
+			'title': 'The effect of squint correction on Stokes V Map Spectra'.format(peakStokes.upper()),
 			'show': True,
-			# 'filename':'{}.map.spec.{}peak{}.pdf'.format(title, line, peakStokes),
+			# 'filename':'all.map.spec.{}peak{}.pdf'.format(line, peakStokes),
 			'figsize': figsize,
 		},
 		imspectOptions=imspectOptions

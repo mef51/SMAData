@@ -164,7 +164,7 @@ def plotAllSources(uncorrectedMaps, correctedMaps, sources, peakStokes='v', regi
 	# gather data for all sources
 	tickParams = {'axis': 'both', 'which': 'both', 'direction': 'in', 'right': True, 'top': True, 'labelsize': 10}
 	plotDefaults = {
-		'nrows': 8, 'ncols': 2,
+		'nrows': 4, 'ncols': 2,
 		'sharex': 'none', 'sharey': 'row',
 		'xlabel': 'Frequency (GHz)', 'ylabel': 'Intensity (Jy/Beam)',
 		'minorticks': True,
@@ -175,8 +175,7 @@ def plotAllSources(uncorrectedMaps, correctedMaps, sources, peakStokes='v', regi
 	for i, source in enumerate(sources):
 		uncMap = uncorrectedMaps[i]
 		cMap   = correctedMaps[i]
-		freqs, amps = getMapData(uncMap, cMap, 'co3-2', ['i', 'v'], peakStokes, regionWidths[i], imspectOptions=imspectOptions[i])
-		# data[source] = {'freqs': freqs, 'amps': amps}
+		freqs, amps = getMapData(uncMap, cMap, 'co3-2', ['v'], peakStokes, regionWidths[i], imspectOptions=imspectOptions[i])
 
 		newPanels = []
 		for j, freq in enumerate(freqs):
@@ -184,10 +183,21 @@ def plotAllSources(uncorrectedMaps, correctedMaps, sources, peakStokes='v', regi
 			if i == 0:
 				if j == 0:
 					newPanel['subtitle'] = 'Uncorrected Spectra'
-				elif j == 2:
+				elif j == 1:
 					newPanel['subtitle'] = 'Corrected Spectra'
 
 			linestyle = 'r-' if j is 0 or j is 2 else 'm-'
+
+			if source == 'NGC7538S-s4':
+				print("Zeroing bad window in NGC7538")
+				channels = list(filter(lambda x: x > 346.7 and x < 346.75, freqs[j]))
+				for channel in channels:
+					idx = freqs[j].index(channel)
+					amps[j][idx] = 0
+
+				idx = freqs[j].index(channels[0]) - 500
+				amps[j] = amps[j][:idx]
+				freqs[j] = freqs[j][:idx]
 
 			newPanel[0] = {'x': freqs[j], 'y': amps[j], 'label': source, 'draw': 'steps-mid', 'line': linestyle}
 			newPanel = {**newPanel, **{
@@ -198,9 +208,7 @@ def plotAllSources(uncorrectedMaps, correctedMaps, sources, peakStokes='v', regi
 			newPanels.append(newPanel)
 
 		sourcePlots.append(newPanels[0])
-		sourcePlots.append(newPanels[2])
 		sourcePlots.append(newPanels[1])
-		sourcePlots.append(newPanels[3])
 
 	sourcePlots = [{**sourcePlots[0], **plotOptions}] + sourcePlots[1:]
 	fig = plawt.plot(*sourcePlots)
@@ -218,7 +226,7 @@ def getMapData(uncorrectedMap, correctedMap, line, stokes, peakStokes, regionWid
 	```
 
 	"""
-	peakLineMap = (correctedMap + '.' + peakStokes + '.full.cm').replace('usb', line)
+	peakLineMap = (correctedMap + '.' + peakStokes + '.cm').replace('usb', line)
 	try:
 		maxPixel = miriad.maxfit({'in': peakLineMap, 'options': 'abs'}, stdout=subprocess.PIPE).stdout
 		maxPixel = str(maxPixel).split('\\n')[4]

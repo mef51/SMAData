@@ -102,24 +102,39 @@ def compareMapSpectra(uncorrectedMap, correctedMap, line, stokes, source, peakSt
 	"""
 
 	# find the peak of Stokes I or V in the corrected line map
+	if source == 'orkl_080106':
+		peakStokes = 'v'
+		print('here')
+
+
 	frequencies, amplitudes = getMapData(uncorrectedMap, correctedMap, line, stokes, peakStokes, regionWidth, imspectOptions)
+
+	if source == 'NGC7538S-s4':
+		print("Zeroing bad window in NGC7538")
+		channels = list(filter(lambda x: x > 346.7 and x < 346.75, frequencies[2]))
+		for channel in channels:
+			idx = frequencies[2].index(channel)
+			amplitudes[2][idx] = 0
+			amplitudes[3][idx] = 0
 
 	legendFontSize = 12
 	tickParams = {'axis': 'both', 'which': 'both', 'direction': 'in', 'right': True, 'top': True, 'labelsize': 10}
 	axisLabelSize = 14
 	plotDefaults = {
-		0: {'x': frequencies[0], 'y': amplitudes[0], 'draw': 'steps-mid', 'line': 'r-',
-			'label': 'Uncorrected Stokes I'
+		0: {'x': frequencies[2], 'y': amplitudes[2], 'draw': 'steps-mid', 'line': 'r-',
+			'label': 'Corrected Stokes I'
 		},
-		'nrows': 2, 'ncols': 2,
+		'nrows': 2, 'ncols': 1,
 		'legend': {'loc': legendloc, 'fontsize': legendFontSize},
 		'xlabel': 'Frequency (GHz)', 'ylabel': 'Average Intensity (Jy/beam)',
 		'xlabelsize': axisLabelSize, 'ylabelsize': axisLabelSize,
 		'sharex': True, 'sharey': 'row',
 		'minorticks': True,
-		'tight_layout': {'pad': 3, 'h_pad': 2.0, 'w_pad': 0},
+		'tight_layout': {'pad': 3, 'h_pad': 0.1, 'w_pad': 0},
 		'tick_params': tickParams,
-		'titlesize': 18
+		'titlesize': 18,
+		'hspace': 0.05,
+		'top': 0.93,
 	}
 
 	plotOptions['title'] = plotOptions['title'] + ': Peak of Stokes {} through {} line'.format(
@@ -129,18 +144,6 @@ def compareMapSpectra(uncorrectedMap, correctedMap, line, stokes, source, peakSt
 	plotOptions['subloc'] = 'left'
 
 	fig = plawt.plot({**plotDefaults, **plotOptions}, {
-		0: {'x': frequencies[2], 'y': amplitudes[2], 'draw': 'steps-mid', 'line': 'r-',
-			'label': 'Corrected Stokes I'
-		},
-		'legend': {'loc': legendloc, 'fontsize': legendFontSize},
-		'tick_params': tickParams
-	}, {
-		0: {'x': frequencies[1], 'y': amplitudes[1], 'draw': 'steps-mid', 'line': 'm-',
-			'label': 'Uncorrected Stokes V'
-		},
-		'legend': {'loc': legendloc, 'fontsize': legendFontSize},
-		'tick_params': tickParams
-	}, {
 		0: {'x': frequencies[3], 'y': amplitudes[3], 'draw': 'steps-mid', 'line': 'm-',
 			'label': 'Corrected Stokes V'
 		},
@@ -193,6 +196,7 @@ def plotAllSources(uncorrectedMaps, correctedMaps, sources, peakStokes='v', regi
 					newPanel['subtitle'] = 'Corrected Spectra'
 
 			linestyle = 'r-' if j is 0 or j is 2 else 'm-'
+			linestyle = 'm-'
 
 			if source == 'NGC7538S-s4':
 				print("Zeroing bad window in NGC7538")
@@ -231,27 +235,11 @@ def getMapData(uncorrectedMap, correctedMap, line, stokes, peakStokes, regionWid
 	```
 
 	"""
-	peakLineMap = (correctedMap + '.' + peakStokes + '.cm').replace('usb', line)
-	try:
-		maxPixel = miriad.maxfit({'in': peakLineMap, 'options': 'abs'}, stdout=subprocess.PIPE).stdout
-		maxPixel = str(maxPixel).split('\\n')[4]
-		maxPixel = maxPixel[maxPixel.find('(')+1:maxPixel.find(')')].split(',')[0:2]
-		maxPixel = list(map(int, maxPixel))
-	except:
-		maxPixel = [64, 64]
-
-	# make a box around the peak (by finding a bottom left corner 'blc' and top right corner 'trc')
-	blc = (maxPixel[0] - regionWidth/2, maxPixel[1] - regionWidth/2)
-	blc = tuple(map(int, blc))
-	trc = (maxPixel[0] + regionWidth/2, maxPixel[1] + regionWidth/2)
-	trc = tuple(map(int, trc))
-	region = 'abspixel,box({},{},{},{})'.format(blc[0], blc[1], trc[0], trc[1])
-
 	corrText = ['uncorr', 'corr']
 	frequencies = []
 	amplitudes = []
 	for i, mapdir in enumerate([uncorrectedMap, correctedMap]):
-		peakLineMap = (mapdir + '.' + peakStokes + '.cm').replace('usb', line)
+		peakLineMap = (mapdir + '.' + peakStokes + '.full.cm').replace('usb', line)
 		try:
 			maxPixel = miriad.maxfit({'in': peakLineMap}, stdout=subprocess.PIPE).stdout
 			maxPixel = str(maxPixel).split('\\n')[4]

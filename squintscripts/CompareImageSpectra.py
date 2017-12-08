@@ -26,9 +26,28 @@ sources = [
 
 uncorrectedMaps = ['{}.usb.uncorrected'.format(source) for source in sources]
 correctedMaps = ['{}.usb'.format(source) for source in sources]
-line = 'co3-2'
-
 figsize = (11,8.5)
+
+# orion Kl sio plot
+line = 'sio8-7'
+peakStokes = 'v'
+paperplots.compareMapSpectra(
+	'../{}/MAPSCorrect/{}'.format(folders[0], uncorrectedMaps[0]),
+	'../{}/MAPSCorrect/{}'.format(folders[0], correctedMaps[0]),
+	line,
+	['i', 'v'],
+	sources[0],
+	peakStokes=peakStokes,
+	regionWidth=1,
+	legendloc=2,
+	plotOptions={
+		'title': sourceTitles[0],
+		'filename':'{}.map.spec.{}peak{}.pdf'.format(sourceTitles[0], line, peakStokes),
+		'figsize': figsize,
+	}
+)
+exit()
+line = 'co3-2'
 for peakStokes in ['v']:
 	print(sources[0])
 	source = sources[0]
@@ -47,7 +66,7 @@ for peakStokes in ['v']:
 		legendloc=1,
 		plotOptions={
 			'title': title,
-			'filename':'{}.map.spec.{}average{}.pdf'.format(title, line, peakStokes),
+			'filename':'{}.map.spec.{}peak{}.pdf'.format(title, line, peakStokes),
 			'figsize': figsize,
 		}
 	)
@@ -69,7 +88,7 @@ for peakStokes in ['v']:
 		legendloc=1 if peakStokes is 'i' else 1,
 		plotOptions={
 			'title': title,
-			'filename':'{}.map.spec.{}average{}.pdf'.format(title, line, peakStokes),
+			'filename':'{}.map.spec.{}peak{}.pdf'.format(title, line, peakStokes),
 			'figsize': figsize,
 		},
 		imspectOptions={
@@ -93,7 +112,7 @@ for peakStokes in ['v']:
 		regionWidth=5,
 		plotOptions={
 			'title': title,
-			'filename':'{}.map.spec.{}average{}.pdf'.format(title, line, peakStokes),
+			'filename':'{}.map.spec.{}peak{}.pdf'.format(title, line, peakStokes),
 			'figsize': figsize,
 		},
 	)
@@ -115,7 +134,7 @@ for peakStokes in ['v']:
 		legendloc=1 if peakStokes is 'v' else 1,
 		plotOptions={
 			'title': title,
-			'filename':'{}.map.spec.{}average{}.pdf'.format(title, line, peakStokes),
+			'filename':'{}.map.spec.{}peak{}.pdf'.format(title, line, peakStokes),
 			'figsize': figsize,
 		}
 	)
@@ -130,9 +149,9 @@ for peakStokes in ['v']:
 		sources,
 		peakStokes=peakStokes,
 		plotOptions={
-			'title': 'Map Averaged Stokes V Map Spectra before and after squint correction'.format(peakStokes.upper()),
+			'title': 'Stokes V Map Spectra before and after squint correction'.format(peakStokes.upper()),
 			'show': True,
-			'filename':'stokesv.map.spec.{}average{}.pdf'.format(line, peakStokes),
+			'filename':'stokesv.map.spec.{}peak{}.pdf'.format(line, peakStokes),
 			'figsize': figsize,
 		},
 		imspectOptions=imspectOptions

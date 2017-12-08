@@ -104,8 +104,6 @@ def compareMapSpectra(uncorrectedMap, correctedMap, line, stokes, source, peakSt
 	# find the peak of Stokes I or V in the corrected line map
 	if source == 'orkl_080106':
 		peakStokes = 'v'
-		print('here')
-
 
 	frequencies, amplitudes = getMapData(uncorrectedMap, correctedMap, line, stokes, peakStokes, regionWidth, imspectOptions)
 
@@ -137,7 +135,7 @@ def compareMapSpectra(uncorrectedMap, correctedMap, line, stokes, source, peakSt
 		'top': 0.93,
 	}
 
-	plotOptions['title'] = plotOptions['title'] + ': Peak of Stokes {} through {} line'.format(
+	plotOptions['title'] = plotOptions['title'] + ': Map Averaged Stokes {} through {} line'.format(
 		peakStokes.upper(), line.upper()
 	)
 
@@ -264,7 +262,7 @@ def getMapData(uncorrectedMap, correctedMap, line, stokes, peakStokes, regionWid
 			# get i and v spectra through the point where v peaks in the line map
 			imspectDefaults = {
 				'in': mappath,
-				'region': region,
+				# 'region': region,
 			}
 			x, y, _ = miriad.dumpImspect(mappath, options={**imspectDefaults, **imspectOptions})
 			frequencies.append(x)

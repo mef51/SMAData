@@ -47,7 +47,7 @@ for peakStokes in ['v']:
 		legendloc=1,
 		plotOptions={
 			'title': title,
-			'filename':'{}.map.spec.{}peak{}.pdf'.format(title, line, peakStokes),
+			'filename':'{}.map.spec.{}average{}.pdf'.format(title, line, peakStokes),
 			'figsize': figsize,
 		}
 	)
@@ -69,7 +69,7 @@ for peakStokes in ['v']:
 		legendloc=1 if peakStokes is 'i' else 1,
 		plotOptions={
 			'title': title,
-			'filename':'{}.map.spec.{}peak{}.pdf'.format(title, line, peakStokes),
+			'filename':'{}.map.spec.{}average{}.pdf'.format(title, line, peakStokes),
 			'figsize': figsize,
 		},
 		imspectOptions={
@@ -93,7 +93,7 @@ for peakStokes in ['v']:
 		regionWidth=5,
 		plotOptions={
 			'title': title,
-			'filename':'{}.map.spec.{}peak{}.pdf'.format(title, line, peakStokes),
+			'filename':'{}.map.spec.{}average{}.pdf'.format(title, line, peakStokes),
 			'figsize': figsize,
 		},
 	)
@@ -115,7 +115,7 @@ for peakStokes in ['v']:
 		legendloc=1 if peakStokes is 'v' else 1,
 		plotOptions={
 			'title': title,
-			'filename':'{}.map.spec.{}peak{}.pdf'.format(title, line, peakStokes),
+			'filename':'{}.map.spec.{}average{}.pdf'.format(title, line, peakStokes),
 			'figsize': figsize,
 		}
 	)
@@ -130,9 +130,9 @@ for peakStokes in ['v']:
 		sources,
 		peakStokes=peakStokes,
 		plotOptions={
-			'title': 'Stokes V Map Spectra before and after squint correction'.format(peakStokes.upper()),
+			'title': 'Map Averaged Stokes V Map Spectra before and after squint correction'.format(peakStokes.upper()),
 			'show': True,
-			'filename':'stokesv.map.spec.{}peak{}.pdf'.format(line, peakStokes),
+			'filename':'stokesv.map.spec.{}average{}.pdf'.format(line, peakStokes),
 			'figsize': figsize,
 		},
 		imspectOptions=imspectOptions

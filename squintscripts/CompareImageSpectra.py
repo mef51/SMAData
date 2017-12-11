@@ -29,20 +29,21 @@ correctedMaps = ['{}.usb'.format(source) for source in sources]
 figsize = (11,8.5)
 
 # orion Kl sio plot
-line = 'sio8-7'
+line = 'co3-2'
 peakStokes = 'v'
+idx = 0
 paperplots.compareMapSpectra(
-	'../{}/MAPSCorrect/{}'.format(folders[0], uncorrectedMaps[0]),
-	'../{}/MAPSCorrect/{}'.format(folders[0], correctedMaps[0]),
+	'../{}/MAPSCorrect/{}'.format(folders[idx], uncorrectedMaps[idx]),
+	'../{}/MAPSCorrect/{}'.format(folders[idx], correctedMaps[idx]),
 	line,
 	['i', 'v'],
-	sources[0],
+	sources[idx],
 	peakStokes=peakStokes,
 	regionWidth=1,
 	legendloc=2,
 	plotOptions={
-		'title': sourceTitles[0],
-		'filename':'{}.map.spec.{}peak{}.pdf'.format(sourceTitles[0], line, peakStokes),
+		'title': sourceTitles[idx],
+		'filename':'{}.map.spec.{}peak{}.pdf'.format(sourceTitles[idx], line, peakStokes),
 		'figsize': figsize,
 	}
 )

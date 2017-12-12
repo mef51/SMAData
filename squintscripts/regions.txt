@@ -1,0 +1,21 @@
+orkl_080106
+../OrionKL/MAPSCorrect/orkl_080106.co3-2.uncorrected.v.full.cm region:
+	[72, 7]
+../OrionKL/MAPSCorrect/orkl_080106.co3-2.v.full.cm region:
+	[90, 111]
+NGC7538S-s4
+../NGC7538/MAPSCorrect/NGC7538S-s4.co3-2.uncorrected.v.full.cm region:
+	[8, 6]
+../NGC7538/MAPSCorrect/NGC7538S-s4.co3-2.v.full.cm region:
+	[82, 82]
+Zeroing bad window in NGC7538
+irc+10216
+../IRC+10216/MAPSCorrect/irc+10216.co3-2.uncorrected.v.full.cm region:
+	[64, 66]
+../IRC+10216/MAPSCorrect/irc+10216.co3-2.v.full.cm region:
+	[61, 85]
+iras2a.aver
+../NGC1333/MAPSCorrect/iras2a.aver.co3-2.uncorrected.v.full.cm region:
+	[54, 54]
+../NGC1333/MAPSCorrect/iras2a.aver.co3-2.v.full.cm region:
+	[64, 64]

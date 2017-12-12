@@ -29,25 +29,26 @@ correctedMaps = ['{}.usb'.format(source) for source in sources]
 figsize = (11,8.5)
 
 # orion Kl sio plot
-line = 'co3-2'
-peakStokes = 'v'
-idx = 0
-paperplots.compareMapSpectra(
-	'../{}/MAPSCorrect/{}'.format(folders[idx], uncorrectedMaps[idx]),
-	'../{}/MAPSCorrect/{}'.format(folders[idx], correctedMaps[idx]),
-	line,
-	['i', 'v'],
-	sources[idx],
-	peakStokes=peakStokes,
-	regionWidth=1,
-	legendloc=2,
-	plotOptions={
-		'title': sourceTitles[idx],
-		'filename':'{}.map.spec.{}peak{}.pdf'.format(sourceTitles[idx], line, peakStokes),
-		'figsize': figsize,
-	}
-)
-exit()
+# line = 'co3-2'
+# peakStokes = 'v'
+# idx = 0
+# paperplots.compareMapSpectra(
+# 	'../{}/MAPSCorrect/{}'.format(folders[idx], uncorrectedMaps[idx]),
+# 	'../{}/MAPSCorrect/{}'.format(folders[idx], correctedMaps[idx]),
+# 	line,
+# 	['i', 'v'],
+# 	sources[idx],
+# 	peakStokes=peakStokes,
+# 	regionWidth=1,
+# 	legendloc=2,
+# 	plotOptions={
+# 		'title': sourceTitles[idx],
+# 		'filename':'{}.map.spec.{}peak{}.pdf'.format(sourceTitles[idx], line, peakStokes),
+# 		'figsize': figsize,
+# 	}
+# )
+# exit()
+
 line = 'co3-2'
 for peakStokes in ['v']:
 	print(sources[0])
@@ -87,9 +88,10 @@ for peakStokes in ['v']:
 		peakStokes=peakStokes,
 		regionWidth=1,
 		legendloc=1 if peakStokes is 'i' else 1,
+		useFull=False,
 		plotOptions={
 			'title': title,
-			'filename':'{}.map.spec.{}peak{}.pdf'.format(title, line, peakStokes),
+			'filename':'{}.map.spec.{}peak{}.notfull.pdf'.format(title, line, peakStokes),
 			'figsize': figsize,
 		},
 		imspectOptions={

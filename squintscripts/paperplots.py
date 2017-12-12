@@ -78,6 +78,7 @@ def compareSpectra(visUncorrected, visCorrected,
 
 def compareMapSpectra(uncorrectedMap, correctedMap, line, stokes, source, peakStokes='v', regionWidth=1,
 	legendloc=1,
+	useFull=True,
 	plotOptions={},
 	imspectOptions={}):
 	"""
@@ -105,7 +106,7 @@ def compareMapSpectra(uncorrectedMap, correctedMap, line, stokes, source, peakSt
 	if source == 'orkl_080106' and line != 'sio8-7':
 		peakStokes = 'v'
 
-	frequencies, amplitudes = getMapData(uncorrectedMap, correctedMap, line, stokes, peakStokes, regionWidth, imspectOptions)
+	frequencies, amplitudes = getMapData(uncorrectedMap, correctedMap, line, stokes, peakStokes, regionWidth, useFull, imspectOptions)
 
 	if source == 'NGC7538S-s4':
 		print("Zeroing bad window in NGC7538")
@@ -182,7 +183,10 @@ def plotAllSources(uncorrectedMaps, correctedMaps, sources, peakStokes='v', regi
 	for i, source in enumerate(sources):
 		uncMap = uncorrectedMaps[i]
 		cMap   = correctedMaps[i]
-		freqs, amps = getMapData(uncMap, cMap, 'co3-2', ['v'], peakStokes, regionWidths[i], imspectOptions=imspectOptions[i])
+		useFull = not (source == 'NGC7538S-s4') # if NGC7538, use the integrated map. The peak in the full map looks like squint and not real.
+		print('useFull:', useFull)
+		print(source)
+		freqs, amps = getMapData(uncMap, cMap, 'co3-2', ['v'], peakStokes, regionWidths[i], useFull=useFull, imspectOptions=imspectOptions[i])
 
 		newPanels = []
 		for j, freq in enumerate(freqs):
@@ -220,7 +224,7 @@ def plotAllSources(uncorrectedMaps, correctedMaps, sources, peakStokes='v', regi
 	sourcePlots = [{**sourcePlots[0], **plotOptions}] + sourcePlots[1:]
 	fig = plawt.plot(*sourcePlots)
 
-def getMapData(uncorrectedMap, correctedMap, line, stokes, peakStokes, regionWidth=1, imspectOptions={}):
+def getMapData(uncorrectedMap, correctedMap, line, stokes, peakStokes, regionWidth=1, useFull=True, imspectOptions={}):
 	"""
 	Returns two numpy arrays representing the uncorrected and corrected spectra for each given stokes
 	these arrays in turn are of length 2*len(stokes).
@@ -237,7 +241,11 @@ def getMapData(uncorrectedMap, correctedMap, line, stokes, peakStokes, regionWid
 	frequencies = []
 	amplitudes = []
 	for i, mapdir in enumerate([uncorrectedMap, correctedMap]):
-		peakLineMap = (mapdir + '.' + peakStokes + '.full.cm').replace('usb', line)
+		if useFull:
+			peakLineMap = (mapdir + '.' + peakStokes + '.full.cm').replace('usb', line)
+		else:
+			peakLineMap = (mapdir + '.' + peakStokes + '.cm').replace('usb', line)
+
 		try:
 			maxPixel = miriad.maxfit({'in': peakLineMap}, stdout=subprocess.PIPE).stdout
 			maxPixel = str(maxPixel).split('\\n')[4]
@@ -252,6 +260,15 @@ def getMapData(uncorrectedMap, correctedMap, line, stokes, peakStokes, regionWid
 		trc = (maxPixel[0] + regionWidth/2, maxPixel[1] + regionWidth/2)
 		trc = tuple(map(int, trc))
 		region = 'abspixel,box({},{},{},{})'.format(blc[0], blc[1], trc[0], trc[1])
+		print(peakLineMap)
+		print('peak at:', str(maxPixel))
+
+		# save overlay file
+		overlayFile = '{}.{}.cmap.olay'.format(mapdir.split('/')[1], peakStokes)
+		output = 'star abspix abspix Peak_V yes {} {} 6 6'.format(maxPixel[0], maxPixel[1])
+		with open(overlayFile, 'w') as f:
+			f.write('color 1\n')
+			f.write(output)
 
 		for stk in stokes:
 			mapsuffix = '.{}.full.cm'.format(stk)

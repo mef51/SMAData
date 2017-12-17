@@ -46,7 +46,7 @@ cgdispOptions = {
 	'levs2': '-8,-7,-6,-5,-4,-3,-2,2,3,4,5,6,7,8',
 	'cols1': 2, 'cols2': 4,
 	'device': 'orkl.cnt.uncorr.ps/cps',
-	'options': 'blacklab',
+	'options': 'blacklab,beambl',
 	'lines': '3,2,2'
 }
 miriad.cgdisp(cgdispOptions)
@@ -81,7 +81,7 @@ for folder, source, rms, plane in zip(folders, sources, fullRMSes, imageplanes):
 		'levs2': '-8,-7,-6,-5,-4,-3,-2,2,3,4,5,6,7,8',
 		'cols1': 2, 'cols2': 4,
 		'device': '{}.co3-2.full.plane{}.ps/cps'.format(source, plane),
-		'options': 'blacklab,3val',
+		'options': 'blacklab,3val,beambl',
 		'3format': '3pe12.6',
 		'olay': '{}.v.cmap.olay'.format(folder),
 		'region': 'images({})'.format(plane),

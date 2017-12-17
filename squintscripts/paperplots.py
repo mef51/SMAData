@@ -80,7 +80,8 @@ def compareMapSpectra(uncorrectedMap, correctedMap, line, stokes, source, peakSt
 	legendloc=1,
 	useFull=True,
 	plotOptions={},
-	imspectOptions={}):
+	imspectOptions={},
+	maxfitOptions={}):
 	"""
 	maxfit options=abs on the corrected/uncorrected maps for each line
 	reinvert the visibilities without the 'mfs' to preserve the velocity axis
@@ -103,10 +104,10 @@ def compareMapSpectra(uncorrectedMap, correctedMap, line, stokes, source, peakSt
 	"""
 
 	# find the peak of Stokes I or V in the corrected line map
-	if source == 'orkl_080106' and line != 'sio8-7':
-		peakStokes = 'v'
+	# if source == 'orkl_080106' and line != 'sio8-7':
+	# 	peakStokes = 'v'
 
-	frequencies, amplitudes = getMapData(uncorrectedMap, correctedMap, line, stokes, peakStokes, regionWidth, useFull, imspectOptions)
+	frequencies, amplitudes = getMapData(uncorrectedMap, correctedMap, line, stokes, peakStokes, regionWidth, useFull, imspectOptions, maxfitOptions)
 
 	if source == 'NGC7538S-s4':
 		print("Zeroing bad window in NGC7538")
@@ -224,7 +225,7 @@ def plotAllSources(uncorrectedMaps, correctedMaps, sources, peakStokes='v', regi
 	sourcePlots = [{**sourcePlots[0], **plotOptions}] + sourcePlots[1:]
 	fig = plawt.plot(*sourcePlots)
 
-def getMapData(uncorrectedMap, correctedMap, line, stokes, peakStokes, regionWidth=1, useFull=True, imspectOptions={}):
+def getMapData(uncorrectedMap, correctedMap, line, stokes, peakStokes, regionWidth=1, useFull=True, imspectOptions={}, maxfitOptions={}):
 	"""
 	Returns two numpy arrays representing the uncorrected and corrected spectra for each given stokes
 	these arrays in turn are of length 2*len(stokes).
@@ -247,7 +248,7 @@ def getMapData(uncorrectedMap, correctedMap, line, stokes, peakStokes, regionWid
 			peakLineMap = (mapdir + '.' + peakStokes + '.cm').replace('usb', line)
 
 		try:
-			maxPixel = miriad.maxfit({'in': peakLineMap}, stdout=subprocess.PIPE).stdout
+			maxPixel = miriad.maxfit({**{'in': peakLineMap}, **maxfitOptions}, stdout=subprocess.PIPE).stdout
 			maxPixel = str(maxPixel).split('\\n')[4]
 			maxPixel = maxPixel[maxPixel.find('(')+1:maxPixel.find(')')].split(',')[0:2]
 			maxPixel = list(map(int, maxPixel))

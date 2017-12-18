@@ -10,7 +10,7 @@ SMA2012_Serpens/Biblio/*.pdf
 results/orionkl/*.pdf
 compressed/
 *.pyc
-
+userguide_US.pdf
 
 # gildas things
 *.gdf

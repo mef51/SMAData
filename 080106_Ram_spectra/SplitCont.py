@@ -24,8 +24,9 @@ elif sideband == 'USB':
 	free = '1,23,33,85,95,104,108,140,150,166,180,216,228,268,305,322,329,345'
 
 vis = 'UVDATA/{}'.format(so)
-path = '{}.{}'.format(vis, lab)
-if os.path.exists(path): shutil.rmtree(path)
+paths = ['{}.{}'.format(vis, lab), '{}.full.{}'.format(vis, lab)]
+for path in paths:
+	if os.path.exists(path): shutil.rmtree(path)
 for path in glob.glob('tmp.*'):
 	if os.path.exists(path): shutil.rmtree(path)
 
@@ -57,7 +58,7 @@ miriad.smauvspec({
 
 input("Return to continue")
 miriad.uvlin({
-	'vis': 'tmp.3',
+	'vis': 'tmp.4',
 	'out': '{}.{}'.format(vis, lab),
 	'chans': free,
 	'mode': 'chan0',

@@ -389,3 +389,12 @@ uvredo  vis=tmp.2  out=tmp.3  options=velocity
 6 Dec 2017
 ----------
 * if I put my code online it won't work because people won't have the same directory structure as me. But I can just dump my directory to a monster file (using tree for example) and if anyone cares they can look at it to recreate the directory structure
+
+7 Dec 2017
+----------
+* The peak across all the data in orion kl (not just the peak across the co3-2 or sio8-7 data) is at a molecular line. That's good. There is no peak in the continuum that is larger than the CO or SiO peaks
+Commands:
+```
+maxfit in=orkl_080106.usb.v.full.cm region='images(2,215)' options=abs
+imspect in=orkl_080106.usb.v.full.cm device=1/xs region='abspix,box(40,59,40,59)'
+```

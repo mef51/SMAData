@@ -47,12 +47,15 @@ cgdispOptions = {
 	'cols1': 2, 'cols2': 4,
 	'device': 'orkl.cnt.uncorr.ps/cps',
 	'options': 'blacklab,beambl',
-	'lines': '3,2,2'
+	'lines': '3,2,2',
+	'olay': 'uncorr.olay',
+	'csize': '0,0,1.5'
 }
 miriad.cgdisp(cgdispOptions)
 cgdispOptions['in'] = '../{0}/MAPSCorrect/{1}.cnt.i.cm,../{0}/MAPSCorrect/{1}.cnt.v.cm'.format(folders[1], sources[1])
 cgdispOptions['device'] = 'orkl.cnt.corr.ps/cps'
 cgdispOptions['slev'] = 'p,1,a,{}'.format(0.02)
+cgdispOptions['olay'] = 'corr.olay'
 miriad.cgdisp(cgdispOptions)
 exit()
 

@@ -398,3 +398,7 @@ Commands:
 maxfit in=orkl_080106.usb.v.full.cm region='images(2,215)' options=abs
 imspect in=orkl_080106.usb.v.full.cm device=1/xs region='abspix,box(40,59,40,59)'
 ```
+
+21 March 2017
+-------------
+* See SplitCorrectedCont.py for a stronger version of the check mentioned on Dec 7 2017. This script will explicitly give you the value for V/I for the continuum (which is less than any V/I at a line), instead of using maxfit to indirectly show that V/I in the continuum is less than V/I elsewhere.

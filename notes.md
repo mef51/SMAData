@@ -399,6 +399,22 @@ maxfit in=orkl_080106.usb.v.full.cm region='images(2,215)' options=abs
 imspect in=orkl_080106.usb.v.full.cm device=1/xs region='abspix,box(40,59,40,59)'
 ```
 
-21 March 2017
+21 March 2018
 -------------
 * See SplitCorrectedCont.py for a stronger version of the check mentioned on Dec 7 2017. This script will explicitly give you the value for V/I for the continuum (which is less than any V/I at a line), instead of using maxfit to indirectly show that V/I in the continuum is less than V/I elsewhere.
+
+22 March 2018
+-------------
+* Orion KL CO 3-2: Plane 5 has a detection that is closer to the center, slightly lower SNR
+* NGC7538 doesn't really have a better detection. It really looks like there is a lot of squint.
+* smauvplt vis=irc+10216.usb.corrected.slfc axis=uvd,amp options=nobase device=1/xs stokes=i,v select='uvrange(uvmin,uvmax)'
+
+* people report transitions in the scattering mechanism around 1.3 mm that is probably just ARS. But some papers are saying like its a different mechanism when it probably isnt, its just LP is being lost
+
+* to redo IRC+10216 with less visibilities, after changing IRC+10216/Correct_RR_LL_offset.py
+```
+cd /media/mohammed/F26A3AF46A3AB4E7/SMAData/IRC+10216
+./Correct_RR_LL_offset.py
+cd /media/mohammed/F26A3AF46A3AB4E7/SMAData/squintscripts
+./GetCOMaps.py
+```

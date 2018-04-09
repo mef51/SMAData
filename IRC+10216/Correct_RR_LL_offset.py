@@ -20,9 +20,12 @@ if __name__ == '__main__':
 	# )
 	input("Press return to map visibilities with frequency axis")
 	lsels = ['vel,8,-40,4,4' for l in lines]
+	selects = ['uvrange(0,80)' if l == 'co3-2' else None for l in lines]
+
 	lsels[lines.index('usb')] = miriad.averageVelocityLine('UVOffsetCorrect/irc+10216.usb.corrected.slfc', 17)
 	squint.mapallvis(uvo, uvc, so, mapdir, lines[:],
-		lineSelection=lsels
+		lineSelection=lsels,
+		selects=selects
 	)
 	# input("Press return to save plots")
 	# vrms = 0.13

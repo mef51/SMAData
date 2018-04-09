@@ -108,6 +108,21 @@ for folder, source, rms in zip(folders, sources, fullRMSes):
 		'nxy': '1,1',
 	})
 
+miriad.cgdisp({
+	'in': '../{0}/MAPSCorrect/{1}.sio8-7.i.cm,../{0}/MAPSCorrect/{1}.sio8-7.v.full.cm'.format('OrionKL', 'orkl_080106'),
+	'labtyp': 'arcsec,arcsec',
+	'type': 'cont,cont',
+	'slev': 'p,1,a,{}'.format(0.238),
+	'levs1': '15,30,45,60,85,95',
+	'levs2': '-8,-7,-6,-5,-4,-3,-2,2,3,4,5,6,7,8',
+	'cols1': 2, 'cols2': 4,
+	'device': '{}.sio8-7.full.ps/cps'.format('orkl_080106'),
+	'options': 'blacklab,3val,beambl',
+	'3format': '3pe12.6',
+	'olay': '{}.v.cmap.olay'.format('OrionKL'),
+	'nxy': '1,1',
+})
+
 def getRMSes(full=False):
 	"""
 	Runs these commands in the terminal:
@@ -122,4 +137,4 @@ def getRMSes(full=False):
 		else:
 			miriad.imstat({'in': '../{}/MAPSCorrect/{}.co3-2.v.cm'.format(folder, source)})
 
-miriad.imstat({'in': '../OrionKL/MAPSCorrect/orkl_080106.co3-2.v.full.cm'.format(folder, source)})
+miriad.imstat({'in': '../OrionKL/MAPSCorrect/orkl_080106.sio8-7.v.full.cm'})

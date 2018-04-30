@@ -418,3 +418,21 @@ cd /media/mohammed/F26A3AF46A3AB4E7/SMAData/IRC+10216
 cd /media/mohammed/F26A3AF46A3AB4E7/SMAData/squintscripts
 ./GetCOMaps.py
 ```
+
+19 April 2018
+-------------
+* I need to track down where the data I'm using has been used before
+	* IRC+10216
+		* Girart et al. 2012
+	* Orion KL
+		* Tang et al. 2010
+	* NGC7538
+		* I believe unpublished, observed by Ram, ask him
+	* NGC1333 IRAS2A
+		* I believe unpublished, observed by Ram, ask him
+* I need to trace the history of GK observations:
+	* Glenn et al. 1997 (first detection)
+	* Greaves et al. 1999 (second detection, but they thought it was first)
+	* Girart et al. 1999 (first interferometric GK detection)
+	* Lai et al. 2003 (dust + CO, use dust to confirm CO)
+	* Cortes et al. 2005 (confirm Lai et al. 2013 plus some other stuff)

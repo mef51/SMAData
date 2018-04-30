@@ -11,6 +11,7 @@ results/orionkl/*.pdf
 compressed/
 *.pyc
 userguide_US.pdf
+login.md
 
 # gildas things
 *.gdf

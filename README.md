@@ -7,7 +7,9 @@ A simple custom Miriad wrapper is used that allows scripting in python and that 
 https://github.com/mef51/smautils
 
 Copy these scripts into a folder with reduced miriad data to correct for LL and RR beam squint.
+
 The following tree is assumed inside the miriad datafolder:
+```
 /data/
 	/data/MAPS/             -- maps, uncorrected for beam squint, produced by MapCont.py and MapLines.py
 	/data/MAPSCorrect/      -- maps, produced by Correct_RR_LL_offset.py
@@ -18,3 +20,4 @@ The following tree is assumed inside the miriad datafolder:
 	MapCont.py              -- script that maps the uncorrected continuum
 	MapLines.py             -- script that maps the uncorrected lines
 	Correct_RR_LL_offset.py -- script that corrects the visibilities using `selfcal` on the continuum then maps everything
+```

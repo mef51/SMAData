@@ -117,9 +117,10 @@ def compareMapSpectra(uncorrectedMap, correctedMap, line, stokes, source, peakSt
 			amplitudes[2][idx] = 0
 			amplitudes[3][idx] = 0
 
-	legendFontSize = 12
-	tickParams = {'axis': 'both', 'which': 'both', 'direction': 'in', 'right': True, 'top': True, 'labelsize': 10}
-	axisLabelSize = 14
+	legendFontSize = 20
+	tickParams = [{'axis': 'both', 'which': 'both', 'direction': 'in', 'right': True, 'top': True, 'labelsize': 16},
+					{'which': 'major', 'length':7}]
+	axisLabelSize = 20
 	plotDefaults = {
 		0: {'x': frequencies[2], 'y': amplitudes[2], 'draw': 'steps-mid', 'line': 'r-',
 			'label': 'Corrected Stokes I'
@@ -132,7 +133,7 @@ def compareMapSpectra(uncorrectedMap, correctedMap, line, stokes, source, peakSt
 		'minorticks': True,
 		'tight_layout': {'pad': 3, 'h_pad': 0.1, 'w_pad': 0},
 		'tick_params': tickParams,
-		'titlesize': 18,
+		'titlesize': 20,
 		'hspace': 0.05,
 		'top': 0.93,
 	}
@@ -144,7 +145,7 @@ def compareMapSpectra(uncorrectedMap, correctedMap, line, stokes, source, peakSt
 	plotOptions['subloc'] = 'left'
 
 	fig = plawt.plot({**plotDefaults, **plotOptions}, {
-		0: {'x': frequencies[3], 'y': amplitudes[3], 'draw': 'steps-mid', 'line': 'm-',
+		0: {'x': frequencies[3], 'y': amplitudes[3], 'draw': 'steps-mid', 'line': 'b-',
 			'label': 'Corrected Stokes V'
 		},
 		'legend': {'loc': legendloc, 'fontsize': legendFontSize},
@@ -198,8 +199,8 @@ def plotAllSources(uncorrectedMaps, correctedMaps, sources, peakStokes='v', regi
 				elif j == 1:
 					newPanel['subtitle'] = 'Corrected Spectra'
 
-			linestyle = 'r-' if j is 0 or j is 2 else 'm-'
-			linestyle = 'm-'
+			linestyle = 'r-' if j is 0 or j is 2 else 'b-'
+			linestyle = 'b-'
 
 			if source == 'NGC7538S-s4':
 				print("Zeroing bad window in NGC7538")
@@ -254,6 +255,11 @@ def getMapData(uncorrectedMap, correctedMap, line, stokes, peakStokes, regionWid
 			maxPixel = list(map(int, maxPixel))
 		except:
 			maxPixel = [64, 64]
+			if 'OrionKL' in correctedMap:
+				maxPixel = [90, 111]
+
+		if 'sio' in line and 'OrionKL' in correctedMap:
+			maxPixel = [124, 75]
 
 		# make a box around the peak (by finding a bottom left corner 'blc' and top right corner 'trc')
 		blc = (maxPixel[0] - regionWidth/2, maxPixel[1] - regionWidth/2)

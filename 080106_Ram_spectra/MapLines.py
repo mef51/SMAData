@@ -9,7 +9,7 @@ dd = 'UVDATA'
 line = 'vel,43,-31,2,2'
 rms = 0.3
 
-molecule = 'CO'
+molecule = 'SiO'
 
 if molecule == 'CO':
 	freq = 345.7959

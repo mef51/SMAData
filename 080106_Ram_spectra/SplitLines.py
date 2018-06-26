@@ -7,7 +7,7 @@ so = 'orkl_080106'
 dd = 'UVDATA'
 lb = 'vis.uvcal'
 
-molecule = 'SiO'
+molecule = 'CO'
 
 if molecule == 'CO':
 	win = '4'

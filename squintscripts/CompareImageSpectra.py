@@ -27,6 +27,7 @@ sources = [
 uncorrectedMaps = ['{}.usb.uncorrected'.format(source) for source in sources]
 correctedMaps = ['{}.usb'.format(source) for source in sources]
 figsize = (11,8.5)
+annotsize = 20
 
 # orion Kl sio plot
 # sio8-7.full.v.cm has peak at 124, 75
@@ -37,6 +38,9 @@ idx = 0
 sioMaxFitOptions = {
 	'options': 'abs'
 }
+
+siodata = exec(open('siodata.snip.py').read())
+
 paperplots.compareMapSpectra(
 	'../{}/MAPSCorrect/{}'.format(folders[idx], uncorrectedMaps[idx]),
 	'../{}/MAPSCorrect/{}'.format(folders[idx], correctedMaps[idx]),
@@ -51,13 +55,13 @@ paperplots.compareMapSpectra(
 		'title': sourceTitles[idx],
 		'filename':'{}.map.spec.{}peak{}.pdf'.format(sourceTitles[idx], line, peakStokes),
 		'figsize': figsize,
-		'text': [{'x':345.9, 'y': 3, 's':'CO $(J=3 \\rightarrow 2)$', 'fontsize':12},
-				 {'x':347.18, 'y': 0.4, 's':'SiO $(J=8 \\rightarrow 7)$', 'fontsize':12}],
+		'text': [{'x':345.9, 'y': 3, 's':'CO $(J=3 \\rightarrow 2)$', 'fontsize':annotsize},
+				 {'x':347.08, 'y': 0.45, 's':'SiO $(J=8 \\rightarrow 7)$', 'fontsize':annotsize}],
 	},
-	maxfitOptions=sioMaxFitOptions
+	maxfitOptions=sioMaxFitOptions,
+	data=siodata
 )
-exit()
-annotsize = 20
+# exit()
 line = 'co3-2'
 for peakStokes in ['v']:
 	print(sources[0])

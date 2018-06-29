@@ -81,7 +81,8 @@ def compareMapSpectra(uncorrectedMap, correctedMap, line, stokes, source, peakSt
 	useFull=True,
 	plotOptions={},
 	imspectOptions={},
-	maxfitOptions={}):
+	maxfitOptions={},
+	data=None):
 	"""
 	maxfit options=abs on the corrected/uncorrected maps for each line
 	reinvert the visibilities without the 'mfs' to preserve the velocity axis
@@ -107,7 +108,10 @@ def compareMapSpectra(uncorrectedMap, correctedMap, line, stokes, source, peakSt
 	# if source == 'orkl_080106' and line != 'sio8-7':
 	# 	peakStokes = 'v'
 
-	frequencies, amplitudes = getMapData(uncorrectedMap, correctedMap, line, stokes, peakStokes, regionWidth, useFull, imspectOptions, maxfitOptions)
+	if data is None:
+		frequencies, amplitudes = getMapData(uncorrectedMap, correctedMap, line, stokes, peakStokes, regionWidth, useFull, imspectOptions, maxfitOptions)
+	else:
+		frequencies, amplitudes = data[2], data[3]
 
 	if source == 'NGC7538S-s4':
 		print("Zeroing bad window in NGC7538")

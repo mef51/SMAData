@@ -1,7 +1,8 @@
 Squint Scripts
 ========
 
-The scripts in squintscripts/ are used to perform the squint correction on the Submillimeter Array's data that has already been reduced and calibrated. This is done to remove spurious Stokes V signals. Used to obtain the results presented in Chamma et al. 2018 (submitted).
+The scripts in squintscripts/ are used to perform the squint correction on the Submillimeter Array's data that has already been reduced and calibrated. This is done to remove spurious Stokes V signals.    
+Used to obtain the results presented in Chamma et al. 2018 ([arXiv](https://arxiv.org/abs/1808.00211), [MNRAS](https://academic.oup.com/mnras/article/480/3/3123/5064241)).
 
 A simple custom Miriad wrapper is used that allows scripting in python and that wrapper can be found here:
 https://github.com/mef51/smautils
